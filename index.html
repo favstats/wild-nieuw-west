@@ -44,12 +44,7 @@
 
         body {
             font-family: 'Cormorant Garamond', Georgia, serif;
-            background:
-                radial-gradient(#c9a227 9px, transparent 10px) 0 0 / 90px 90px,
-                repeating-radial-gradient(#c9a227 0, #c9a227 4px, transparent 5px, transparent 20px, #d4a898 21px, #d4a898 25px, transparent 26px, transparent 50px) 0 0 / 90px 90px,
-                radial-gradient(#8a9a5b 9px, transparent 10px) 45px 45px / 90px 90px,
-                repeating-radial-gradient(#8a9a5b 0, #8a9a5b 4px, transparent 5px, transparent 20px, #946478 21px, #946478 25px, transparent 26px, transparent 50px) 45px 45px / 90px 90px,
-                #1a1c16;
+            background: #1a1c16;
             color: var(--cream);
             display: flex;
             flex-direction: column;
@@ -1297,10 +1292,10 @@
            ============================================ */
         .floral-bg {
             position: fixed;
+            top: 0;
             bottom: 0;
             left: 0;
             right: 0;
-            height: 60vh;
             pointer-events: none;
             z-index: 0;
             overflow: hidden;
@@ -1315,8 +1310,24 @@
             transform-origin: bottom center;
         }
         .fl--1 { left: 50%; transform: translateX(-50%); }
-        .fl--2 { left: 15%; transform: rotate(-12deg); }
-        .fl--3 { right: 10%; transform: rotate(8deg); }
+        .fl--2 { left: 12%; transform: rotate(-12deg); }
+        .fl--3 { right: 8%; transform: rotate(8deg); }
+        .fl--4 { left: 32%; transform: rotate(5deg) scale(0.7); }
+        .fl--5 { right: 28%; transform: rotate(-8deg) scale(0.75); }
+
+        /* Flower 4 — cream/gold petals */
+        .fl--4 .fl__petal--1 { background: linear-gradient(to top, #a89850, #d4c890); }
+        .fl--4 .fl__petal--2 { background: linear-gradient(to top, #a89850, #e8dfd0); }
+        .fl--4 .fl__petal--3 { background: linear-gradient(to top, #a89850, #d4c890); }
+        .fl--4 .fl__petal--4 { background: linear-gradient(to top, #806830, #c4a860); }
+        .fl--4 .fl__stem { height: 30vmin; }
+
+        /* Flower 5 — mauve petals */
+        .fl--5 .fl__petal--1 { background: linear-gradient(to top, #946478, #c090a8); }
+        .fl--5 .fl__petal--2 { background: linear-gradient(to top, #946478, #d4a8c0); }
+        .fl--5 .fl__petal--3 { background: linear-gradient(to top, #946478, #c090a8); }
+        .fl--5 .fl__petal--4 { background: linear-gradient(to top, #704858, #a87890); }
+        .fl--5 .fl__stem { height: 38vmin; }
 
         /* Petals container */
         .fl__petals {
@@ -1440,6 +1451,40 @@
         .fl__grass--4 { right: 20%; transform: rotate(5deg); height: 50vmin; border-color: #5a6838; }
         .fl__grass--5 { left: 45%; transform: rotateY(180deg) rotate(20deg); height: 35vmin; border-color: #7a8a4b; }
 
+        /* Floating flowers (no stems, scattered) */
+        .fl-float {
+            position: absolute;
+            width: 10vmin;
+            height: 10vmin;
+            opacity: 0.7;
+        }
+        .fl-float .fl__petal {
+            width: 4vmin;
+            height: 6vmin;
+        }
+        .fl-float .fl__center {
+            width: 3vmin;
+            height: 2vmin;
+        }
+        .fl-float--1 { top: 8%; left: 5%; transform: scale(0.6) rotate(-15deg); }
+        .fl-float--2 { top: 15%; right: 8%; transform: scale(0.5) rotate(20deg); opacity: 0.5; }
+        .fl-float--3 { top: 35%; left: 8%; transform: scale(0.45) rotate(-25deg); opacity: 0.4; }
+        .fl-float--4 { top: 5%; left: 35%; transform: scale(0.4) rotate(10deg); opacity: 0.45; }
+        .fl-float--5 { top: 25%; right: 5%; transform: scale(0.55) rotate(-10deg); opacity: 0.5; }
+        .fl-float--6 { top: 45%; right: 15%; transform: scale(0.35) rotate(30deg); opacity: 0.35; }
+
+        /* Different colors for floating flowers */
+        .fl-float--1 .fl__petal { background: linear-gradient(to top, #946478, #c090a8) !important; }
+        .fl-float--2 .fl__petal { background: linear-gradient(to top, #a89850, #d4c890) !important; }
+        .fl-float--3 .fl__petal { background: linear-gradient(to top, #b07878, #e8c4c4) !important; }
+        .fl-float--4 .fl__petal { background: linear-gradient(to top, #8a9a5b, #b0c480) !important; }
+        .fl-float--5 .fl__petal { background: linear-gradient(to top, #b07878, #d4a898) !important; }
+        .fl-float--6 .fl__petal { background: linear-gradient(to top, #a89850, #e8dfd0) !important; }
+
+        /* Extra grass */
+        .fl__grass--6 { left: 40%; transform: rotate(8deg); height: 60vmin; border-color: #7a8a4b; }
+        .fl__grass--7 { right: 35%; transform: rotateY(180deg) rotate(12deg); height: 48vmin; border-color: #5a6838; }
+
         /* Glow particles */
         .fl__glow {
             position: absolute;
@@ -1454,6 +1499,9 @@
         .fl__glow--3 { right: 18%; bottom: 50%; }
         .fl__glow--4 { left: 35%; bottom: 35%; width: 0.8vmin; height: 0.8vmin; background: #e8dfd0; }
         .fl__glow--5 { right: 30%; bottom: 40%; width: 0.8vmin; height: 0.8vmin; background: #d4a898; box-shadow: 0 0 1.5vmin rgba(212,168,152,0.4); }
+        .fl__glow--6 { left: 10%; top: 20%; background: #c9a227; }
+        .fl__glow--7 { right: 12%; top: 30%; width: 1vmin; height: 1vmin; background: #d4a898; box-shadow: 0 0 2vmin rgba(212,168,152,0.5); }
+        .fl__glow--8 { left: 55%; top: 15%; width: 1vmin; height: 1vmin; background: #8a9a5b; box-shadow: 0 0 2vmin rgba(138,154,91,0.5); }
     </style>
 </head>
 <body>
@@ -1473,58 +1521,52 @@
 
     <!-- Static Floral Background -->
     <div class="floral-bg">
-      <!-- Flower 1: center -->
+      <!-- Bottom flowers (tall, with stems) -->
       <div class="fl fl--1">
-        <div class="fl__petals">
-          <div class="fl__petal fl__petal--1"></div>
-          <div class="fl__petal fl__petal--2"></div>
-          <div class="fl__petal fl__petal--3"></div>
-          <div class="fl__petal fl__petal--4"></div>
-          <div class="fl__center"></div>
-        </div>
-        <div class="fl__stem"></div>
-        <div class="fl__leaf fl__leaf--l"></div>
-        <div class="fl__leaf fl__leaf--r"></div>
-        <div class="fl__leaf fl__leaf--l2"></div>
+        <div class="fl__petals"><div class="fl__petal fl__petal--1"></div><div class="fl__petal fl__petal--2"></div><div class="fl__petal fl__petal--3"></div><div class="fl__petal fl__petal--4"></div><div class="fl__center"></div></div>
+        <div class="fl__stem"></div><div class="fl__leaf fl__leaf--l"></div><div class="fl__leaf fl__leaf--r"></div><div class="fl__leaf fl__leaf--l2"></div>
       </div>
-      <!-- Flower 2: left -->
       <div class="fl fl--2">
-        <div class="fl__petals">
-          <div class="fl__petal fl__petal--1"></div>
-          <div class="fl__petal fl__petal--2"></div>
-          <div class="fl__petal fl__petal--3"></div>
-          <div class="fl__petal fl__petal--4"></div>
-          <div class="fl__center"></div>
-        </div>
-        <div class="fl__stem"></div>
-        <div class="fl__leaf fl__leaf--r"></div>
-        <div class="fl__leaf fl__leaf--l"></div>
+        <div class="fl__petals"><div class="fl__petal fl__petal--1"></div><div class="fl__petal fl__petal--2"></div><div class="fl__petal fl__petal--3"></div><div class="fl__petal fl__petal--4"></div><div class="fl__center"></div></div>
+        <div class="fl__stem"></div><div class="fl__leaf fl__leaf--r"></div><div class="fl__leaf fl__leaf--l"></div>
       </div>
-      <!-- Flower 3: right -->
       <div class="fl fl--3">
-        <div class="fl__petals">
-          <div class="fl__petal fl__petal--1"></div>
-          <div class="fl__petal fl__petal--2"></div>
-          <div class="fl__petal fl__petal--3"></div>
-          <div class="fl__petal fl__petal--4"></div>
-          <div class="fl__center"></div>
-        </div>
-        <div class="fl__stem"></div>
-        <div class="fl__leaf fl__leaf--l"></div>
-        <div class="fl__leaf fl__leaf--r"></div>
+        <div class="fl__petals"><div class="fl__petal fl__petal--1"></div><div class="fl__petal fl__petal--2"></div><div class="fl__petal fl__petal--3"></div><div class="fl__petal fl__petal--4"></div><div class="fl__center"></div></div>
+        <div class="fl__stem"></div><div class="fl__leaf fl__leaf--l"></div><div class="fl__leaf fl__leaf--r"></div>
       </div>
+      <!-- Extra bottom flowers -->
+      <div class="fl fl--4">
+        <div class="fl__petals"><div class="fl__petal fl__petal--1"></div><div class="fl__petal fl__petal--2"></div><div class="fl__petal fl__petal--3"></div><div class="fl__petal fl__petal--4"></div><div class="fl__center"></div></div>
+        <div class="fl__stem"></div><div class="fl__leaf fl__leaf--l"></div><div class="fl__leaf fl__leaf--r"></div>
+      </div>
+      <div class="fl fl--5">
+        <div class="fl__petals"><div class="fl__petal fl__petal--1"></div><div class="fl__petal fl__petal--2"></div><div class="fl__petal fl__petal--3"></div><div class="fl__petal fl__petal--4"></div><div class="fl__center"></div></div>
+        <div class="fl__stem"></div><div class="fl__leaf fl__leaf--r"></div><div class="fl__leaf fl__leaf--l"></div>
+      </div>
+      <!-- Floating flowers (no stems, scattered higher) -->
+      <div class="fl-float fl-float--1"><div class="fl__petal fl__petal--1"></div><div class="fl__petal fl__petal--2"></div><div class="fl__petal fl__petal--3"></div><div class="fl__center"></div></div>
+      <div class="fl-float fl-float--2"><div class="fl__petal fl__petal--1"></div><div class="fl__petal fl__petal--2"></div><div class="fl__petal fl__petal--3"></div><div class="fl__center"></div></div>
+      <div class="fl-float fl-float--3"><div class="fl__petal fl__petal--1"></div><div class="fl__petal fl__petal--2"></div><div class="fl__petal fl__petal--3"></div><div class="fl__center"></div></div>
+      <div class="fl-float fl-float--4"><div class="fl__petal fl__petal--1"></div><div class="fl__petal fl__petal--2"></div><div class="fl__petal fl__petal--3"></div><div class="fl__center"></div></div>
+      <div class="fl-float fl-float--5"><div class="fl__petal fl__petal--1"></div><div class="fl__petal fl__petal--2"></div><div class="fl__petal fl__petal--3"></div><div class="fl__center"></div></div>
+      <div class="fl-float fl-float--6"><div class="fl__petal fl__petal--1"></div><div class="fl__petal fl__petal--2"></div><div class="fl__petal fl__petal--3"></div><div class="fl__center"></div></div>
       <!-- Grass/fern shapes -->
       <div class="fl__grass fl__grass--1"></div>
       <div class="fl__grass fl__grass--2"></div>
       <div class="fl__grass fl__grass--3"></div>
       <div class="fl__grass fl__grass--4"></div>
       <div class="fl__grass fl__grass--5"></div>
-      <!-- Light particles -->
+      <div class="fl__grass fl__grass--6"></div>
+      <div class="fl__grass fl__grass--7"></div>
+      <!-- Glow particles -->
       <div class="fl__glow fl__glow--1"></div>
       <div class="fl__glow fl__glow--2"></div>
       <div class="fl__glow fl__glow--3"></div>
       <div class="fl__glow fl__glow--4"></div>
       <div class="fl__glow fl__glow--5"></div>
+      <div class="fl__glow fl__glow--6"></div>
+      <div class="fl__glow fl__glow--7"></div>
+      <div class="fl__glow fl__glow--8"></div>
     </div>
 
     <!-- Leave Button -->
