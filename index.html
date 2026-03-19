@@ -1559,6 +1559,86 @@
             padding: 10px;
         }
 
+        /* Dossier card */
+        .dossier {
+            text-align: left;
+        }
+        .dossier__icon {
+            text-align: center;
+            font-size: 2.5rem;
+            color: var(--gold);
+            margin-bottom: 8px;
+        }
+        .dossier__name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            color: var(--cream);
+            text-align: center;
+            margin-bottom: 2px;
+        }
+        .dossier__title {
+            font-family: 'Poiret One', serif;
+            font-size: 0.85rem;
+            color: var(--gold);
+            text-align: center;
+            letter-spacing: 0.15em;
+            margin-bottom: 12px;
+        }
+        .dossier__field {
+            margin-bottom: 10px;
+        }
+        .dossier__label {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
+            color: var(--gold-dark);
+            margin-bottom: 2px;
+        }
+        .dossier__value {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 0.95rem;
+            color: var(--cream);
+            line-height: 1.5;
+        }
+        .dossier__quirk {
+            font-style: italic;
+            color: var(--rose);
+        }
+
+        /* Guest list item */
+        .guest-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(201,162,39,0.15);
+            cursor: pointer;
+        }
+        .guest-item:hover { background: rgba(201,162,39,0.05); }
+        .guest-item__icon {
+            font-size: 1.2rem;
+            color: var(--gold);
+            width: 28px;
+            text-align: center;
+        }
+        .guest-item__info { flex: 1; }
+        .guest-item__name {
+            font-family: 'Playfair Display', serif;
+            font-size: 0.95rem;
+            color: var(--cream);
+        }
+        .guest-item__prof {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+        .guest-item__dead {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 0.6rem;
+            color: var(--wine-light);
+            letter-spacing: 0.1em;
+        }
+
         /* Inbox message item */
         .inbox-item {
             border-left: 3px solid var(--gold-dark);
@@ -2399,6 +2479,24 @@
         </div>
     </div>
 
+    <!-- Dossier Modal -->
+    <div class="note-modal" id="dossier-modal">
+        <div class="note-modal__card" style="max-height: 80vh; overflow-y: auto;">
+            <div class="note-modal__title"><i class="fas fa-id-card"></i> Your Dossier</div>
+            <div id="dossier-content"></div>
+            <button class="btn btn-secondary" onclick="document.getElementById('dossier-modal').classList.remove('visible')" style="width: 100%; margin-top: 16px;">Close</button>
+        </div>
+    </div>
+
+    <!-- Guest List Modal -->
+    <div class="note-modal" id="guestlist-modal">
+        <div class="note-modal__card" style="max-height: 80vh; overflow-y: auto;">
+            <div class="note-modal__title"><i class="fas fa-users"></i> Tonight's Guests</div>
+            <div id="guestlist-content"></div>
+            <button class="btn btn-secondary" onclick="document.getElementById('guestlist-modal').classList.remove('visible')" style="width: 100%; margin-top: 16px;">Close</button>
+        </div>
+    </div>
+
     <!-- Inbox Modal -->
     <div class="note-modal" id="inbox-modal">
         <div class="note-modal__card" style="max-height: 70vh; overflow-y: auto;">
@@ -2733,6 +2831,12 @@
                 <button class="btn-send-note" onclick="openInbox()" style="margin-top: 8px;">
                     <i class="fas fa-inbox"></i> Inbox <span id="inbox-badge" style="display:none; background: var(--wine); color: var(--cream); padding: 1px 6px; border-radius: 50%; font-size: 0.7rem; margin-left: 6px;">0</span>
                 </button>
+                <button class="btn-send-note" onclick="openDossier()" style="margin-top: 8px;">
+                    <i class="fas fa-id-card"></i> My Dossier
+                </button>
+                <button class="btn-send-note" onclick="openGuestList()" style="margin-top: 8px;">
+                    <i class="fas fa-users"></i> Guest List
+                </button>
             </div>
             <button class="btn-lights-out" id="btn-lights-out" onclick="toggleLightsOut()" style="display: none;">
                 <i class="fas fa-moon"></i> LIGHTS OUT
@@ -2850,15 +2954,139 @@
             }
         };
 
-        // Character names (roles are secret — determined by backend on join)
-        const CHARACTER_NAMES = [
-            'Contessa Valentina', 'Professor Aldric', 'Baroness Eloise',
-            'Captain Mortimer', 'Madame Séraphine', 'Lord Pemberton',
-            'Dr. Faust', 'Lady Blackwood', 'Signor Rinaldi',
-            'Miss Clementine', 'Colonel Ashworth', 'Duchess Margaux',
-            'Henrik the Butler', 'Rosa the Maid', 'Father Ignatius',
-            'Vivienne the Singer',
+        // Characters with full descriptions (easily replaceable JSON)
+        const CHARACTERS = [
+            {
+                name: 'Contessa Valentina',
+                title: 'The Contessa',
+                profession: 'Dispossessed Italian nobility & art collector',
+                icon: 'fa-crown',
+                description: 'Once the jewel of Milanese high society, the Contessa lost her fortune in a scandal involving forged Renaissance paintings. She arrived in Nieuw-West six months ago with nothing but a suitcase of silk dresses and an address book full of secrets. She speaks softly, smiles often, and never forgets a slight.',
+                quirk: 'Touches her pearl necklace when she lies.'
+            },
+            {
+                name: 'Professor Aldric',
+                title: 'The Professor',
+                profession: 'Disgraced academic & amateur criminologist',
+                icon: 'fa-glasses',
+                description: 'Formerly chair of Criminal Psychology at the University of Amsterdam, Professor Aldric was dismissed under mysterious circumstances — something about an experiment that went too far. He now spends his evenings studying crime scenes for sport and his mornings writing letters to the police that they never answer.',
+                quirk: 'Takes notes on everyone in a small leather journal.'
+            },
+            {
+                name: 'Baroness Eloise',
+                title: 'The Baroness',
+                profession: 'Socialite & philanthropist of questionable sincerity',
+                icon: 'fa-hat-wizard',
+                description: 'The Baroness throws the most extravagant charity galas in the western quarter — though no one can say where the money actually goes. She is charming, generous with compliments, and has a talent for making people feel important. Her late husband died under unusual circumstances, but no charges were ever filed.',
+                quirk: 'Always knows where the exits are.'
+            },
+            {
+                name: 'Captain Mortimer',
+                title: 'The Captain',
+                profession: 'Retired naval officer & arms dealer',
+                icon: 'fa-anchor',
+                description: 'Captain Mortimer served with distinction in waters he refuses to name, doing things he refuses to discuss. After his "retirement," he settled in Nieuw-West and opened an import business specializing in "antique weaponry." He is polite, punctual, and radiates the quiet confidence of a man who has killed before.',
+                quirk: 'Stands with his back to the wall at all times.'
+            },
+            {
+                name: 'Madame Séraphine',
+                title: 'The Madame',
+                profession: 'French perfumer & former intelligence operative',
+                icon: 'fa-flask',
+                description: 'Madame Séraphine ran a perfumery in Paris that served as a front for French intelligence during the war. Now she creates bespoke fragrances for the wealthy — and uses her extraordinary sense of smell to detect lies, fear, and guilt. She can tell what you had for breakfast and who you were with last night.',
+                quirk: 'Sniffs the air before entering any room.'
+            },
+            {
+                name: 'Lord Pemberton',
+                title: 'The Lord',
+                profession: 'English gentleman & compulsive gambler',
+                icon: 'fa-dice',
+                description: 'Lord Pemberton inherited a vast estate in Yorkshire which he has systematically dismantled through catastrophic gambling debts. He came to Nieuw-West to escape his creditors and reinvent himself as a man of mystery. He is witty, self-deprecating, and will bet on absolutely anything — including whether he will survive the evening.',
+                quirk: 'Flips a coin before making any decision.'
+            },
+            {
+                name: 'Dr. Faust',
+                title: 'The Doctor',
+                profession: 'Physician with an interest in the boundaries of life and death',
+                icon: 'fa-syringe',
+                description: 'Dr. Faust was a brilliant surgeon until a patient died on his table under circumstances he has never fully explained. He lost his license but not his knowledge. He now practices in the shadows of Nieuw-West, treating those who cannot go to a hospital. He speaks in clinical terms about everything, including love and murder.',
+                quirk: 'Checks people\'s pulses when shaking hands.'
+            },
+            {
+                name: 'Lady Blackwood',
+                title: 'The Widow',
+                profession: 'Three-time widow & medium',
+                icon: 'fa-ghost',
+                description: 'Lady Blackwood has buried three husbands, each wealthier than the last, each dying in increasingly creative ways. She now claims to commune with the dead and hosts séances in her parlour for Nieuw-West\'s elite. Whether she actually speaks to spirits or simply to her own dark imagination is a matter of heated debate.',
+                quirk: 'Pauses mid-sentence as if listening to someone invisible.'
+            },
+            {
+                name: 'Signor Rinaldi',
+                title: 'The Maestro',
+                profession: 'Opera impresario & rumored smuggler',
+                icon: 'fa-music',
+                description: 'Signor Rinaldi once managed the finest opera house in Naples before it burned down under suspicious circumstances. He arrived in Nieuw-West with a trunk full of costumes, a voice like velvet, and connections to people who operate outside the law. He is theatrical, loud, and impossible to ignore — which may be exactly the point.',
+                quirk: 'Breaks into song at inappropriate moments.'
+            },
+            {
+                name: 'Miss Clementine',
+                title: 'The Ingénue',
+                profession: 'Young heiress & aspiring journalist',
+                icon: 'fa-feather-pointed',
+                description: 'Don\'t let the innocent face fool you. Miss Clementine inherited a newspaper fortune and intends to use it. She has been investigating the dark underbelly of Nieuw-West society, and tonight she is here to find the story that will make her career. She asks too many questions, remembers every answer, and carries a very sharp pen.',
+                quirk: 'Writes things on her palm when she has no paper.'
+            },
+            {
+                name: 'Colonel Ashworth',
+                title: 'The Colonel',
+                profession: 'Retired military intelligence & chess grandmaster',
+                icon: 'fa-chess-knight',
+                description: 'The Colonel spent thirty years in military intelligence, running operations across three continents. He retired to Nieuw-West for the quiet life but finds himself unable to stop analyzing everyone around him. He treats social gatherings like military operations and conversations like interrogations. He is always three moves ahead.',
+                quirk: 'Addresses everyone by their surname.'
+            },
+            {
+                name: 'Duchess Margaux',
+                title: 'The Duchess',
+                profession: 'French aristocrat & wine connoisseur with a poisonous reputation',
+                icon: 'fa-wine-glass',
+                description: 'The Duchess Margaux presides over the largest vineyard in Bordeaux and the most dangerous dinner table in Europe. Three guests at her soirées have fallen mysteriously ill over the years — always after drinking her private reserve. She is elegant, imperious, and has a connoisseur\'s knowledge of exactly which substances pair well with which wines.',
+                quirk: 'Never drinks from a glass someone else has poured.'
+            },
+            {
+                name: 'Henrik the Butler',
+                title: 'The Butler',
+                profession: 'Head of household & keeper of all secrets',
+                icon: 'fa-bell-concierge',
+                description: 'Henrik has served the great houses of Nieuw-West for forty years. He has seen everything, heard everything, and said nothing — until now. He knows who is sleeping with whom, who is stealing from whom, and who is planning to kill whom. His silence has always been his power, but tonight he seems... unsettled.',
+                quirk: 'Appears silently behind people mid-conversation.'
+            },
+            {
+                name: 'Rosa the Maid',
+                title: 'The Maid',
+                profession: 'Domestic servant & secret revolutionary',
+                icon: 'fa-broom',
+                description: 'Rosa scrubs floors by day and attends underground political meetings by night. She despises the wealthy guests she serves but needs their secrets for the cause. She moves through rooms like a ghost — invisible to the privileged, but seeing everything. Tonight, she has heard something she wasn\'t supposed to hear.',
+                quirk: 'Polishes things that are already clean when nervous.'
+            },
+            {
+                name: 'Father Ignatius',
+                title: 'The Father',
+                profession: 'Defrocked priest & moral philosopher',
+                icon: 'fa-cross',
+                description: 'Father Ignatius was removed from his parish for reasons the Church will not discuss. He still wears the collar, still offers absolution, and still believes in redemption — mostly his own. He drinks too much communion wine, quotes scripture at awkward moments, and has a troubling habit of being the last person to see the living alive.',
+                quirk: 'Blesses his food, his drink, and occasionally other people\'s drinks.'
+            },
+            {
+                name: 'Vivienne the Singer',
+                title: 'The Chanteuse',
+                profession: 'Cabaret singer & heartbreaker',
+                icon: 'fa-microphone-lines',
+                description: 'Vivienne\'s voice can make grown men weep and strong women weak. She performs nightly at the Velvet Curtain in Nieuw-West, where the powerful come to forget their troubles — and where she collects their whispered confessions like precious gems. She has been romantically linked to at least four guests at tonight\'s party, none of whom know about the others.',
+                quirk: 'Hums softly when she senses danger.'
+            },
         ];
+
+        const CHARACTER_NAMES = CHARACTERS.map(c => c.name);
 
         // Room tasks (all client-side)
         const ROOM_TASKS = {
@@ -2939,7 +3167,7 @@
         };
 
         // ==================== CONFIGURATION ====================
-        const API_URL = 'https://script.google.com/macros/s/AKfycbzfzXo3MQcdOiMeiJVGpbvFNWWhHe40pwju79xNAqDWWK06AAHpakVZMkqHqpCCy2kzFw/exec'; // Replace with your deployed Apps Script URL
+        const API_URL = 'https://script.google.com/macros/s/AKfycbxTAoGF8xXuRDKMCN4XCZncOSLxXNExxpUvmI5TvKYqHnmF4mNROegcsQ9IyTCBJQGC3g/exec'; // Replace with your deployed Apps Script URL
         const POLL_INTERVAL = 5000;
         const TASK_INTERVAL = 20 * 60 * 1000; // 20 minutes
 
@@ -3757,6 +3985,85 @@
                 triggerDeathFlash();
             }
             previousDeathCount = newCount;
+        }
+
+        // ==================== DOSSIER & GUEST LIST ====================
+        function openDossier() {
+            const char = CHARACTERS.find(c => c.name === gameState.characterName);
+            const el = document.getElementById('dossier-content');
+
+            if (!char) {
+                el.innerHTML = `<div class="dossier">
+                    <div class="dossier__icon"><i class="fas fa-mask"></i></div>
+                    <div class="dossier__name">${gameState.characterName || 'Unknown'}</div>
+                    <div class="dossier__title">Custom Guest</div>
+                    <div class="dossier__field"><div class="dossier__label">BACKGROUND</div>
+                    <div class="dossier__value">A mysterious guest with no known history. Perhaps that is the most dangerous kind.</div></div>
+                </div>`;
+            } else {
+                el.innerHTML = `<div class="dossier">
+                    <div class="dossier__icon"><i class="fas ${char.icon}"></i></div>
+                    <div class="dossier__name">${char.name}</div>
+                    <div class="dossier__title">${char.title}</div>
+                    <div class="dossier__field"><div class="dossier__label">PROFESSION</div>
+                    <div class="dossier__value">${char.profession}</div></div>
+                    <div class="dossier__field"><div class="dossier__label">BACKGROUND</div>
+                    <div class="dossier__value">${char.description}</div></div>
+                    <div class="dossier__field"><div class="dossier__label">TELL</div>
+                    <div class="dossier__value dossier__quirk">${char.quirk}</div></div>
+                </div>`;
+            }
+            document.getElementById('dossier-modal').classList.add('visible');
+        }
+
+        function openGuestList() {
+            const el = document.getElementById('guestlist-content');
+            const playerChars = gameState.players.map(p => p.characterName);
+
+            el.innerHTML = gameState.players.map(p => {
+                const char = CHARACTERS.find(c => c.name === p.characterName);
+                const icon = char ? char.icon : 'fa-user';
+                const prof = char ? char.profession : 'Unknown';
+                return `<div class="guest-item" onclick="viewGuest('${(p.characterName || '').replace(/'/g, "\\'")}')">
+                    <div class="guest-item__icon"><i class="fas ${icon}"></i></div>
+                    <div class="guest-item__info">
+                        <div class="guest-item__name">${p.characterName || p.name}</div>
+                        <div class="guest-item__prof">${prof}</div>
+                    </div>
+                    ${p.isDead ? '<div class="guest-item__dead">DECEASED</div>' : ''}
+                </div>`;
+            }).join('');
+
+            document.getElementById('guestlist-modal').classList.add('visible');
+        }
+
+        function viewGuest(charName) {
+            document.getElementById('guestlist-modal').classList.remove('visible');
+            const char = CHARACTERS.find(c => c.name === charName);
+            const el = document.getElementById('dossier-content');
+
+            if (!char) {
+                el.innerHTML = `<div class="dossier">
+                    <div class="dossier__icon"><i class="fas fa-user"></i></div>
+                    <div class="dossier__name">${charName}</div>
+                    <div class="dossier__title">Guest</div>
+                    <div class="dossier__field"><div class="dossier__label">BACKGROUND</div>
+                    <div class="dossier__value">No information on file.</div></div>
+                </div>`;
+            } else {
+                el.innerHTML = `<div class="dossier">
+                    <div class="dossier__icon"><i class="fas ${char.icon}"></i></div>
+                    <div class="dossier__name">${char.name}</div>
+                    <div class="dossier__title">${char.title}</div>
+                    <div class="dossier__field"><div class="dossier__label">PROFESSION</div>
+                    <div class="dossier__value">${char.profession}</div></div>
+                    <div class="dossier__field"><div class="dossier__label">BACKGROUND</div>
+                    <div class="dossier__value">${char.description}</div></div>
+                    <div class="dossier__field"><div class="dossier__label">TELL</div>
+                    <div class="dossier__value dossier__quirk">${char.quirk}</div></div>
+                </div>`;
+            }
+            document.getElementById('dossier-modal').classList.add('visible');
         }
 
         // ==================== LIGHTS OUT ====================
