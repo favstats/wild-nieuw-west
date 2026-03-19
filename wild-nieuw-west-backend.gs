@@ -75,13 +75,13 @@ function handleRequest(params) {
         result = createGame(params.hostName);
         break;
       case 'joinGame':
-        result = joinGame(params.gameCode, params.playerName, params.characterName);
+        result = joinGame(params.gameCode, params.playerName, params.characterName, params.isHost);
         break;
       case 'getPlayers':
         result = getPlayers(params.gameCode);
         break;
       case 'startGame':
-        result = startGame(params.gameCode, params.playerId);
+        result = startGame(params.gameCode, params.hostId);
         break;
       case 'reportDeath':
         result = reportDeath(params.gameCode, params.playerId);
@@ -118,24 +118,25 @@ function createGame(hostName) {
   ensureSheetsExist(ss);
 
   const gameCode = generateGameCode();
-  const playerId = generatePlayerId();
+  const hostId = generatePlayerId();
   const timestamp = new Date().toISOString();
 
   // Store characters in configData (roles stay server-side secret)
+  // Only create game row — host joins via joinGame like everyone else
   const gamesSheet = ss.getSheetByName(GAMES_SHEET);
   gamesSheet.appendRow([
     gameCode,
-    playerId,
+    hostId,
     'waiting',
     timestamp,
     '',
-    JSON.stringify({ characters: CHARACTERS })
+    JSON.stringify({ characters: CHARACTERS, hostName: hostName })
   ]);
 
   return {
     success: true,
     gameCode: gameCode,
-    playerId: playerId,
+    hostId: hostId,
     isHost: true,
     characters: CHARACTERS.map(function(c) { return c.name; })
   };
@@ -145,7 +146,7 @@ function createGame(hostName) {
  * Join a game by picking a character (or entering custom name).
  * Role is determined by character config but only revealed on startGame.
  */
-function joinGame(gameCode, playerName, characterName) {
+function joinGame(gameCode, playerName, characterName, isHost) {
   if (!gameCode || !playerName) {
     return { success: false, error: 'Game code and player name are required' };
   }
@@ -200,7 +201,7 @@ function joinGame(gameCode, playerName, characterName) {
     playerId,
     playerName,
     characterName || playerName,
-    false,
+    isHost === 'true' || isHost === true,
     role,
     false,
     timestamp
