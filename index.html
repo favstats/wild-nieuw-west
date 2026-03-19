@@ -43,12 +43,12 @@
 
         body {
             font-family: 'Cormorant Garamond', Georgia, serif;
-            --s: 90px;
-            background:
-                radial-gradient(#c9a227 24%, #0000 25%),
-                radial-gradient(#d4a0a0 30%, #0000 32%) calc(var(--s)/2) calc(var(--s)/2),
-                repeating-conic-gradient(from 30deg, #3a4232 0 30deg, #2a2e28 0 25%);
-            background-size: var(--s) var(--s);
+            background-image:
+                radial-gradient(closest-side, transparent 0%, transparent 75%, #8a9a5b 76%, #8a9a5b 85%, #2a2a28 86%, #2a2a28 94%, #d4a898 95%, #d4a898 103%, #2a2a28 104%, #2a2a28 112%, #c9a227 113%, #c9a227 121%, #2a2a28 122%, #2a2a28 130%, #6b7a45 131%, #6b7a45 140%),
+                radial-gradient(closest-side, transparent 0%, transparent 75%, #8a9a5b 76%, #8a9a5b 85%, #2a2a28 86%, #2a2a28 94%, #d4a898 95%, #d4a898 103%, #2a2a28 104%, #2a2a28 112%, #c9a227 113%, #c9a227 121%, #2a2a28 122%, #2a2a28 130%, #6b7a45 131%, #6b7a45 140%);
+            background-size: 110px 110px;
+            background-color: #2a2a28;
+            background-position: 0 0, 55px 55px;
             color: var(--cream);
             display: flex;
             flex-direction: column;
