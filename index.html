@@ -1300,12 +1300,10 @@
             bottom: 0;
             left: 0;
             right: 0;
-            height: 55vh;
+            height: 60vh;
             pointer-events: none;
             z-index: 0;
             overflow: hidden;
-            mask-image: linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.3) 40%, transparent 80%);
-            -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.3) 40%, transparent 80%);
         }
 
         .screen { position: relative; z-index: 1; }
@@ -1323,8 +1321,8 @@
         /* Petals container */
         .fl__petals {
             position: relative;
-            width: 14vmin;
-            height: 14vmin;
+            width: 18vmin;
+            height: 18vmin;
             margin: 0 auto;
         }
 
@@ -1333,11 +1331,11 @@
             position: absolute;
             bottom: 0;
             left: 50%;
-            width: 6vmin;
-            height: 9vmin;
+            width: 8vmin;
+            height: 12vmin;
             border-radius: 50% 50% 45% 55% / 60% 60% 40% 40%;
             transform-origin: bottom center;
-            opacity: 0.85;
+            opacity: 0.95;
             box-shadow: inset 0 0 2vmin rgba(255,255,255,0.15);
         }
         .fl__petal--1 {
@@ -1388,10 +1386,10 @@
 
         /* Stem */
         .fl__stem {
-            width: 1.2vmin;
+            width: 1.5vmin;
             height: 45vmin;
             margin: 0 auto;
-            background: linear-gradient(to top, transparent 5%, #6b7a45 30%, #8a9a5b);
+            background: linear-gradient(to top, #3a4a2a, #6b7a45 30%, #8a9a5b);
             box-shadow: inset 0.3vmin 0 0.5vmin rgba(0,0,0,0.2);
         }
         .fl--2 .fl__stem { height: 35vmin; }
@@ -1445,11 +1443,11 @@
         /* Glow particles */
         .fl__glow {
             position: absolute;
-            width: 1.2vmin;
-            height: 1.2vmin;
+            width: 1.5vmin;
+            height: 1.5vmin;
             border-radius: 50%;
             background: #dbb84d;
-            box-shadow: 0 0 2vmin rgba(219,184,77,0.6);
+            box-shadow: 0 0 3vmin rgba(219,184,77,0.8);
         }
         .fl__glow--1 { left: 48%; bottom: 55%; }
         .fl__glow--2 { left: 20%; bottom: 45%; background: #d4a898; box-shadow: 0 0 2vmin rgba(212,168,152,0.5); }
