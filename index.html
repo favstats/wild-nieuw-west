@@ -1355,19 +1355,36 @@
             transform: rotate(2deg);
         }
 
-        /* ====== NOIR CLOCK ====== */
-        .noir-clock {
+        /* ====== NOIR TOPBAR ====== */
+        .noir-topbar {
             position: fixed;
-            top: 12px;
-            left: 50%;
-            transform: translateX(-50%);
+            top: 10px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            z-index: 6;
+            pointer-events: none;
+        }
+        .noir-clock {
             font-family: 'Poiret One', serif;
             font-size: 1.1rem;
             letter-spacing: 0.2em;
             color: rgba(201,162,39,0.5);
-            z-index: 6;
-            pointer-events: none;
             text-shadow: 0 0 8px rgba(201,162,39,0.2);
+        }
+        .noir-gamecode {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 0.75rem;
+            letter-spacing: 0.15em;
+            color: rgba(201,162,39,0.4);
+            cursor: pointer;
+            pointer-events: all;
+        }
+        .noir-gamecode:hover {
+            color: rgba(201,162,39,0.7);
         }
 
         /* ====== DEATH FLASH ====== */
@@ -2300,8 +2317,11 @@
 
     <!-- ==================== GAME SCREEN ==================== -->
     <div id="game-screen" class="screen">
-        <!-- Noir clock -->
-        <div class="noir-clock" id="noir-clock">00:00</div>
+        <!-- Noir clock + game code -->
+        <div class="noir-topbar">
+            <div class="noir-gamecode" id="noir-gamecode" onclick="copyGameCode()"></div>
+            <div class="noir-clock" id="noir-clock">00:00</div>
+        </div>
         <!-- Death flash -->
         <div class="death-flash" id="death-flash"></div>
         <div class="game-container" id="game-container">
@@ -2881,6 +2901,12 @@
 
         function updateGameScreen() {
             const role = ROLE_CONFIG[gameState.role] || ROLE_CONFIG.innocent;
+
+            // Game code in topbar
+            const codeEl = document.getElementById('noir-gamecode');
+            if (codeEl && gameState.gameCode) {
+                codeEl.textContent = 'CODE: ' + gameState.gameCode;
+            }
 
             // Role icon
             const iconEl = document.getElementById('game-role-icon');

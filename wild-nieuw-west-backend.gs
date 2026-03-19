@@ -173,9 +173,29 @@ function joinGame(gameCode, playerName, characterName, isHost) {
   }
 
   if (!gameExists) return { success: false, error: 'Game not found' };
-  if (gameStatus !== 'waiting') return { success: false, error: 'Game has already started' };
 
-  // Check character not taken
+  // If game is active, allow rejoining with existing character
+  if (gameStatus !== 'waiting') {
+    if (characterName) {
+      const playersData = playersSheet.getDataRange().getValues();
+      for (let i = 1; i < playersData.length; i++) {
+        if (playersData[i][0] === gameCode && playersData[i][3] === characterName) {
+          // Return existing player data for rejoin
+          return {
+            success: true,
+            gameCode: gameCode,
+            playerId: playersData[i][1],
+            characterName: playersData[i][3],
+            isHost: playersData[i][4] === true || playersData[i][4] === 'TRUE',
+            rejoin: true
+          };
+        }
+      }
+    }
+    return { success: false, error: 'Game has already started' };
+  }
+
+  // Check character not taken (during waiting phase)
   if (characterName) {
     const playersData = playersSheet.getDataRange().getValues();
     for (let i = 1; i < playersData.length; i++) {
