@@ -1355,6 +1355,52 @@
             transform: rotate(2deg);
         }
 
+        /* ====== NOIR CLOCK ====== */
+        .noir-clock {
+            position: fixed;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Poiret One', serif;
+            font-size: 1.1rem;
+            letter-spacing: 0.2em;
+            color: rgba(201,162,39,0.5);
+            z-index: 6;
+            pointer-events: none;
+            text-shadow: 0 0 8px rgba(201,162,39,0.2);
+        }
+
+        /* ====== DEATH FLASH ====== */
+        .death-flash {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(180,20,20,0.6);
+            pointer-events: none;
+            z-index: 200;
+            opacity: 0;
+            transition: opacity 0.1s;
+        }
+        .death-flash.active {
+            animation: deathFlashAnim 0.8s ease-out;
+        }
+        @keyframes deathFlashAnim {
+            0% { opacity: 0.7; }
+            20% { opacity: 0; }
+            35% { opacity: 0.4; }
+            50% { opacity: 0; }
+            65% { opacity: 0.2; }
+            100% { opacity: 0; }
+        }
+
+        /* ====== TYPEWRITER EFFECT ====== */
+        .task-text.typing {
+            border-right: 2px solid var(--gold);
+            animation: blinkCursor 0.6s step-end infinite;
+        }
+        @keyframes blinkCursor {
+            50% { border-color: transparent; }
+        }
+
         /* Flower shadows for directional lighting */
         .fl { filter: drop-shadow(3vmin 2vmin 4vmin rgba(0,0,0,0.5)); }
         .fl-float { filter: drop-shadow(2vmin 1vmin 3vmin rgba(0,0,0,0.4)); }
@@ -2254,6 +2300,10 @@
 
     <!-- ==================== GAME SCREEN ==================== -->
     <div id="game-screen" class="screen">
+        <!-- Noir clock -->
+        <div class="noir-clock" id="noir-clock">00:00</div>
+        <!-- Death flash -->
+        <div class="death-flash" id="death-flash"></div>
         <div class="game-container" id="game-container">
             <!-- Role Display (hidden by default, tap to peek) -->
             <div class="role-display">
@@ -2748,6 +2798,7 @@
                         // Assign initial task client-side
                         assignRandomTask();
 
+                        previousDeathCount = stateResult.deathCount || 0;
                         saveGameState();
                         showScreen('game-screen');
                         updateGameScreen();
@@ -2774,7 +2825,7 @@
         function requestNewTask() {
             assignRandomTask();
             saveGameState();
-            updateTaskDisplay();
+            updateTaskDisplay(true);
             updateTaskCountdown();
             showStatus('New task assigned!');
             playChime();
@@ -2865,12 +2916,18 @@
             updateDeathDisplay();
         }
 
-        function updateTaskDisplay() {
+        function updateTaskDisplay(animate = false) {
             const roomKey = gameState.currentRoom;
             const roomInfo = ROOM_DISPLAY[roomKey] || { name: roomKey || 'Unknown', icon: 'fa-location-dot' };
 
             document.getElementById('task-room').innerHTML = `<i class="fas ${roomInfo.icon}"></i> <span>${roomInfo.name}</span>`;
-            document.getElementById('task-text').textContent = gameState.currentTask || 'No task assigned yet';
+
+            const taskText = gameState.currentTask || 'No task assigned yet';
+            if (animate) {
+                typewriterText('task-text', taskText);
+            } else {
+                document.getElementById('task-text').textContent = taskText;
+            }
         }
 
         function updateDeathCount() {
@@ -2979,6 +3036,9 @@
                         });
 
                         if (result.success) {
+                            // Check for new deaths before updating
+                            checkForNewDeaths(result.deathCount);
+
                             gameState.deathCount = result.deathCount;
                             gameState.totalPlayers = result.totalPlayers;
                             gameState.players = result.players;
@@ -3189,6 +3249,73 @@
             try { navigator.vibrate(pattern); } catch(e) {}
         }
 
+        // ==================== NOIR CLOCK ====================
+        function startNoirClock() {
+            function updateClock() {
+                const now = new Date();
+                const h = now.getHours().toString().padStart(2, '0');
+                const m = now.getMinutes().toString().padStart(2, '0');
+                const el = document.getElementById('noir-clock');
+                if (el) el.textContent = h + ':' + m;
+            }
+            updateClock();
+            setInterval(updateClock, 10000);
+        }
+
+        // ==================== DEATH FLASH ====================
+        function triggerDeathFlash() {
+            const flash = document.getElementById('death-flash');
+            if (!flash) return;
+            flash.classList.remove('active');
+            void flash.offsetWidth;
+            flash.classList.add('active');
+            haptic([200, 100, 200]);
+        }
+
+        // ==================== TYPEWRITER EFFECT ====================
+        function typewriterText(elementId, text, speed = 35) {
+            const el = document.getElementById(elementId);
+            if (!el) return;
+            el.textContent = '';
+            el.classList.add('typing');
+            let i = 0;
+            function type() {
+                if (i < text.length) {
+                    el.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                } else {
+                    el.classList.remove('typing');
+                }
+            }
+            type();
+        }
+
+        // ==================== DEATH NOTIFICATIONS ====================
+        const DEATH_MESSAGES = [
+            'A scream echoes through the house...',
+            'Something terrible has happened...',
+            'A glass shatters in a distant room...',
+            'The lights flicker ominously...',
+            'A cold wind sweeps through the hall...',
+            'Someone has drawn their last breath...',
+            'A door slams somewhere upstairs...',
+            'The chandelier sways without wind...',
+            'A shadow passes across the wall...',
+            'The music stops. Silence falls...',
+        ];
+        let previousDeathCount = 0;
+
+        function checkForNewDeaths(newCount) {
+            if (newCount > previousDeathCount && previousDeathCount > 0) {
+                // Someone just died!
+                const msg = DEATH_MESSAGES[Math.floor(Math.random() * DEATH_MESSAGES.length)];
+                showStatus(msg);
+                triggerDeathFlash();
+            }
+            previousDeathCount = newCount;
+        }
+
         // ==================== OFFLINE DETECTION ====================
         function setupOfflineDetection() {
             window.addEventListener('offline', () => {
@@ -3259,6 +3386,7 @@
             setupOfflineDetection();
             setupButtonSounds();
             setupPullToRefresh();
+            startNoirClock();
 
             // Check URL params for game code (from QR)
             const urlParams = new URLSearchParams(window.location.search);
