@@ -737,6 +737,31 @@
             padding: 20px;
         }
 
+        .role-peek {
+            padding: 12px 24px;
+            border: 2px dashed rgba(201,162,39,0.4);
+            color: var(--text-muted);
+            font-family: 'Poiret One', serif;
+            font-size: 1rem;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 8px;
+        }
+        .role-peek:hover {
+            border-color: var(--gold);
+            color: var(--cream);
+        }
+        .role-peek i { margin-right: 6px; }
+
+        .role-revealed {
+            animation: fadeInRole 0.5s ease;
+        }
+        @keyframes fadeInRole {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
         .role-icon-large {
             font-size: 4.5rem;
             margin-bottom: 16px;
@@ -1611,7 +1636,7 @@
         .daisy--2 { bottom: 55%; right: 2%; transform: scale(0.6) rotate(15deg); }
         .daisy--3 { top: 10%; right: 20%; transform: scale(0.5) rotate(-10deg); opacity: 0.6; }
         .daisy--4 { top: 22%; left: 15%; transform: scale(0.45) rotate(25deg); opacity: 0.5; }
-        .daisy--5 { bottom: 25%; left: 42%; transform: scale(0.55) rotate(-20deg); opacity: 0.7; }
+        .daisy--5 { bottom: 8%; left: 42%; transform: scale(0.55) rotate(-20deg); opacity: 0.7; }
 
         /* Peach daisies */
         .daisy--1 .daisy__petal { background: linear-gradient(to top, #c4967a, #e8cbb8); }
@@ -1979,9 +2004,6 @@
     <div class="noir-vignette"></div>
     <!-- Film Grain -->
     <div class="film-grain"></div>
-    <!-- Fog wisps -->
-    <div class="fog fog--1"></div>
-    <div class="fog fog--2"></div>
 
     <!-- Dead Overlay -->
     <div class="dead-overlay" id="dead-overlay"></div>
@@ -2233,18 +2255,21 @@
     <!-- ==================== GAME SCREEN ==================== -->
     <div id="game-screen" class="screen">
         <div class="game-container" id="game-container">
-            <!-- Role Display -->
+            <!-- Role Display (hidden by default, tap to peek) -->
             <div class="role-display">
-                <div class="role-icon-large" id="game-role-icon">
-                    <i class="fas fa-mask"></i>
-                </div>
                 <div class="character-name-display" id="game-character-name">Character Name</div>
-                <div class="role-badge" id="game-role-badge">ROLE</div>
-            </div>
-
-            <!-- Role Info Box -->
-            <div class="role-info-box" id="role-info-box">
-                You are an innocent guest. Survive the night.
+                <div class="role-peek" id="role-peek" onclick="peekRole()">
+                    <i class="fas fa-eye"></i> Tap to reveal your role
+                </div>
+                <div class="role-revealed" id="role-revealed" style="display: none;">
+                    <div class="role-icon-large" id="game-role-icon">
+                        <i class="fas fa-mask"></i>
+                    </div>
+                    <div class="role-badge" id="game-role-badge">ROLE</div>
+                    <div class="role-info-box" id="role-info-box">
+                        You are an innocent guest. Survive the night.
+                    </div>
+                </div>
             </div>
 
             <!-- Current Task Card -->
@@ -2753,7 +2778,26 @@
             updateTaskCountdown();
             showStatus('New task assigned!');
             playChime();
-            haptic(200);
+            // Strong vibration pattern: two short buzzes
+            haptic([100, 50, 150]);
+        }
+
+        // Peek at role (tap to show, auto-hide after 5 seconds)
+        let roleTimeout = null;
+        function peekRole() {
+            const peek = document.getElementById('role-peek');
+            const revealed = document.getElementById('role-revealed');
+            peek.style.display = 'none';
+            revealed.style.display = 'block';
+            haptic(50);
+            playClick();
+
+            if (roleTimeout) clearTimeout(roleTimeout);
+            roleTimeout = setTimeout(() => {
+                revealed.style.display = 'none';
+                peek.style.display = 'block';
+                peek.innerHTML = '<i class="fas fa-eye"></i> Tap to peek again';
+            }, 5000);
         }
 
         // Toggle death status
@@ -3141,8 +3185,8 @@
         }
 
         // ==================== HAPTIC ====================
-        function haptic(ms) {
-            try { navigator.vibrate(ms); } catch(e) {}
+        function haptic(pattern) {
+            try { navigator.vibrate(pattern); } catch(e) {}
         }
 
         // ==================== OFFLINE DETECTION ====================
