@@ -84,10 +84,19 @@ function handleRequest(params) {
         result = startGame(params.gameCode, params.hostId);
         break;
       case 'reportDeath':
-        result = reportDeath(params.gameCode, params.playerId);
+        result = reportDeath(params.gameCode, params.playerId, params.lastWords);
         break;
       case 'getGameState':
-        result = getGameState(params.gameCode);
+        result = getGameState(params.gameCode, params.playerId);
+        break;
+      case 'lightsOut':
+        result = lightsOut(params.gameCode, params.hostId, params.enabled);
+        break;
+      case 'sendNote':
+        result = sendNote(params.gameCode, params.fromPlayerId, params.toCharacter, params.message);
+        break;
+      case 'getMyNotes':
+        result = getMyNotes(params.gameCode, params.characterName);
         break;
       default:
         result = { success: false, error: 'Unknown action: ' + action };
@@ -339,7 +348,7 @@ function startGame(gameCode, playerId) {
 /**
  * Toggle a player's death status.
  */
-function reportDeath(gameCode, playerId) {
+function reportDeath(gameCode, playerId, lastWords) {
   if (!gameCode || !playerId) {
     return { success: false, error: 'Game code and player ID are required' };
   }
@@ -355,7 +364,20 @@ function reportDeath(gameCode, playerId) {
       const currentlyDead = playersData[i][6] === true || playersData[i][6] === 'TRUE';
       const newStatus = !currentlyDead;
       playersSheet.getRange(i + 1, 7).setValue(newStatus);
-      return { success: true, isDead: newStatus };
+
+      // Store last words if dying (not un-dying)
+      if (newStatus && lastWords) {
+        // Store in Messages sheet as a broadcast
+        ensureSheetsExist(ss);
+        const messagesSheet = ss.getSheetByName('Messages');
+        const charName = playersData[i][3];
+        messagesSheet.appendRow([
+          gameCode, 'SYSTEM', '', 'LAST WORDS from ' + charName + ': "' + lastWords + '"',
+          new Date().toISOString(), 'lastwords'
+        ]);
+      }
+
+      return { success: true, isDead: newStatus, characterName: playersData[i][3] };
     }
   }
 
@@ -366,7 +388,7 @@ function reportDeath(gameCode, playerId) {
  * Get game state for polling: player list with death status, game status,
  * and the requesting player's own role (if game is active).
  */
-function getGameState(gameCode) {
+function getGameState(gameCode, playerId) {
   if (!gameCode) return { success: false, error: 'Game code is required' };
 
   gameCode = gameCode.toUpperCase().trim();
@@ -375,13 +397,15 @@ function getGameState(gameCode) {
   const gamesSheet = ss.getSheetByName(GAMES_SHEET);
   const playersSheet = ss.getSheetByName(PLAYERS_SHEET);
 
-  // Game status
+  // Game status + configData
   const gamesData = gamesSheet.getDataRange().getValues();
   let gameStatus = 'waiting';
+  let configData = {};
 
   for (let i = 1; i < gamesData.length; i++) {
     if (gamesData[i][0] === gameCode) {
       gameStatus = gamesData[i][2];
+      try { configData = JSON.parse(gamesData[i][5] || '{}'); } catch(e) {}
       break;
     }
   }
@@ -413,6 +437,42 @@ function getGameState(gameCode) {
     }
   }
 
+  // Get recent messages for this player
+  var messages = [];
+  try {
+    var messagesSheet = ss.getSheetByName('Messages');
+    if (messagesSheet) {
+      var msgData = messagesSheet.getDataRange().getValues();
+      var myChar = '';
+      if (playerId) {
+        for (var p = 0; p < players.length; p++) {
+          if (players[p].id === playerId) { myChar = players[p].characterName; break; }
+        }
+      }
+      // Get messages from last 2 minutes (for polling)
+      var twoMinAgo = Date.now() - 120000;
+      for (var m = 1; m < msgData.length; m++) {
+        if (msgData[m][0] === gameCode) {
+          var msgTime = new Date(msgData[m][4]).getTime();
+          if (msgTime > twoMinAgo) {
+            var toChar = msgData[m][2];
+            var msgType = msgData[m][5];
+            // Show if: broadcast (toChar empty), lastwords, or addressed to me
+            if (!toChar || toChar === myChar || msgType === 'lastwords') {
+              messages.push({
+                from: msgData[m][1],
+                to: toChar,
+                message: msgData[m][3],
+                time: msgData[m][4],
+                type: msgType
+              });
+            }
+          }
+        }
+      }
+    }
+  } catch(e) {}
+
   return {
     success: true,
     status: gameStatus,
@@ -420,8 +480,93 @@ function getGameState(gameCode) {
     deathCount: deathCount,
     totalPlayers: players.length,
     alivePlayers: players.length - deathCount,
-    players: players
+    players: players,
+    lightsOut: configData.lightsOut || false,
+    messages: messages
   };
+}
+
+/**
+ * Host toggles Lights Out mode
+ */
+function lightsOut(gameCode, hostId, enabled) {
+  if (!gameCode || !hostId) return { success: false, error: 'Game code and host ID required' };
+
+  gameCode = gameCode.toUpperCase().trim();
+
+  const ss = SpreadsheetApp.openById(SHEET_ID);
+  const gamesSheet = ss.getSheetByName(GAMES_SHEET);
+  const gamesData = gamesSheet.getDataRange().getValues();
+
+  for (let i = 1; i < gamesData.length; i++) {
+    if (gamesData[i][0] === gameCode) {
+      if (gamesData[i][1] !== hostId) return { success: false, error: 'Only the host can control lights' };
+
+      var configData = {};
+      try { configData = JSON.parse(gamesData[i][5] || '{}'); } catch(e) {}
+      configData.lightsOut = (enabled === 'true' || enabled === true);
+      gamesSheet.getRange(i + 1, 6).setValue(JSON.stringify(configData));
+
+      return { success: true, lightsOut: configData.lightsOut };
+    }
+  }
+  return { success: false, error: 'Game not found' };
+}
+
+/**
+ * Send an anonymous note to another player
+ */
+function sendNote(gameCode, fromPlayerId, toCharacter, message) {
+  if (!gameCode || !fromPlayerId || !toCharacter || !message) {
+    return { success: false, error: 'All fields required' };
+  }
+
+  gameCode = gameCode.toUpperCase().trim();
+  message = message.substring(0, 200); // Limit length
+
+  const ss = SpreadsheetApp.openById(SHEET_ID);
+  ensureSheetsExist(ss);
+  const messagesSheet = ss.getSheetByName('Messages');
+
+  messagesSheet.appendRow([
+    gameCode,
+    'Anonymous',
+    toCharacter,
+    message,
+    new Date().toISOString(),
+    'note'
+  ]);
+
+  return { success: true, message: 'Note sent' };
+}
+
+/**
+ * Get notes for a specific character
+ */
+function getMyNotes(gameCode, characterName) {
+  if (!gameCode || !characterName) return { success: false, error: 'Game code and character required' };
+
+  gameCode = gameCode.toUpperCase().trim();
+
+  const ss = SpreadsheetApp.openById(SHEET_ID);
+  var messagesSheet = ss.getSheetByName('Messages');
+  if (!messagesSheet) return { success: true, notes: [] };
+
+  var msgData = messagesSheet.getDataRange().getValues();
+  var notes = [];
+
+  for (var i = 1; i < msgData.length; i++) {
+    if (msgData[i][0] === gameCode && (msgData[i][2] === characterName || msgData[i][5] === 'lastwords')) {
+      notes.push({
+        from: msgData[i][1],
+        message: msgData[i][3],
+        time: msgData[i][4],
+        type: msgData[i][5]
+      });
+    }
+  }
+
+  return { success: true, notes: notes };
 }
 
 // ==================== UTILITY FUNCTIONS ====================
@@ -437,6 +582,12 @@ function ensureSheetsExist(ss) {
   if (!playersSheet) {
     playersSheet = ss.insertSheet(PLAYERS_SHEET);
     playersSheet.appendRow(['gameCode', 'playerId', 'playerName', 'characterName', 'isHost', 'role', 'isDead', 'joinedAt']);
+  }
+
+  let messagesSheet = ss.getSheetByName('Messages');
+  if (!messagesSheet) {
+    messagesSheet = ss.insertSheet('Messages');
+    messagesSheet.appendRow(['gameCode', 'from', 'toCharacter', 'message', 'timestamp', 'type']);
   }
 }
 

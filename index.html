@@ -1418,6 +1418,214 @@
             50% { border-color: transparent; }
         }
 
+        /* ====== LIGHTS OUT OVERLAY ====== */
+        .lights-out {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: #000;
+            z-index: 400;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        .lights-out.active {
+            display: flex;
+        }
+        .lights-out__candle {
+            width: 4px;
+            height: 40px;
+            background: linear-gradient(to top, #e8dfd0, #c9a227);
+            position: relative;
+            border-radius: 2px;
+        }
+        .lights-out__flame {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 20px;
+            background: radial-gradient(ellipse at bottom, #dbb84d 0%, #c9a227 40%, rgba(201,100,20,0.6) 70%, transparent 100%);
+            border-radius: 50% 50% 30% 30%;
+            animation: flicker 0.15s ease-in-out infinite alternate;
+        }
+        .lights-out__glow {
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, rgba(201,162,39,0.15) 0%, transparent 70%);
+            animation: flicker 0.2s ease-in-out infinite alternate;
+        }
+        @keyframes flicker {
+            0% { opacity: 1; transform: translateX(-50%) scale(1); }
+            100% { opacity: 0.7; transform: translateX(-48%) scale(0.95); }
+        }
+        .lights-out__text {
+            font-family: 'Poiret One', serif;
+            font-size: 1.2rem;
+            letter-spacing: 0.3em;
+            color: rgba(201,162,39,0.4);
+            margin-top: 40px;
+        }
+        /* Host lights out button */
+        .btn-lights-out {
+            background: #000;
+            color: var(--gold);
+            border: 2px solid var(--gold-dark);
+            font-family: 'Poiret One', serif;
+            font-size: 1rem;
+            letter-spacing: 0.15em;
+            padding: 12px 24px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 8px;
+            transition: all 0.3s;
+        }
+        .btn-lights-out:hover { background: rgba(201,162,39,0.1); }
+        .btn-lights-out.active-lights {
+            background: var(--gold);
+            color: #000;
+        }
+
+        /* ====== SECRET NOTES ====== */
+        .notes-section {
+            width: 100%;
+            margin-top: 12px;
+        }
+        .btn-send-note {
+            background: transparent;
+            border: 1px solid rgba(201,162,39,0.3);
+            color: var(--gold);
+            font-family: 'Poiret One', serif;
+            font-size: 0.85rem;
+            letter-spacing: 0.1em;
+            padding: 10px 16px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s;
+        }
+        .btn-send-note:hover { background: rgba(201,162,39,0.1); }
+        .note-modal {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 350;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .note-modal.visible { display: flex; }
+        .note-modal__card {
+            background: var(--noir-charcoal);
+            border: 2px solid var(--gold-dark);
+            padding: 24px;
+            width: 100%;
+            max-width: 340px;
+        }
+        .note-modal__title {
+            font-family: 'Poiret One', serif;
+            font-size: 1.1rem;
+            color: var(--gold);
+            letter-spacing: 0.1em;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        .note-modal select, .note-modal textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 12px;
+            background: var(--bg-darker);
+            border: 1px solid var(--gold-dark);
+            color: var(--cream);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1rem;
+        }
+        .note-modal textarea {
+            height: 80px;
+            resize: none;
+        }
+        .note-modal__buttons {
+            display: flex;
+            gap: 8px;
+        }
+        .note-modal__buttons .btn {
+            flex: 1;
+            font-size: 0.9rem;
+            padding: 10px;
+        }
+
+        /* Received note toast */
+        .note-toast {
+            position: fixed;
+            top: -100%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 85%;
+            max-width: 320px;
+            background: #2a2420;
+            border: 1px solid rgba(201,162,39,0.4);
+            border-left: 4px solid var(--gold);
+            padding: 14px 16px;
+            z-index: 250;
+            transition: top 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        .note-toast.visible { top: 60px; }
+        .note-toast__label {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 0.6rem;
+            letter-spacing: 0.2em;
+            color: var(--gold);
+            margin-bottom: 4px;
+        }
+        .note-toast__text {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 1rem;
+            color: var(--cream);
+            line-height: 1.4;
+        }
+
+        /* ====== ACHIEVEMENT TOAST ====== */
+        .achievement {
+            position: fixed;
+            bottom: -80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #2a2420, #3a3430);
+            border: 1px solid var(--gold);
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 250;
+            transition: bottom 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 0 20px rgba(201,162,39,0.2);
+        }
+        .achievement.visible { bottom: 80px; }
+        .achievement__icon {
+            font-size: 1.5rem;
+            color: var(--gold);
+        }
+        .achievement__text {
+            font-family: 'Poiret One', serif;
+            font-size: 0.85rem;
+            letter-spacing: 0.1em;
+            color: var(--cream);
+        }
+        .achievement__name {
+            font-family: 'Playfair Display', serif;
+            font-size: 0.7rem;
+            color: var(--gold);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
         /* ====== NEWSPAPER NOTIFICATION ====== */
         .newspaper {
             position: fixed;
@@ -2136,6 +2344,43 @@
     <!-- Film Grain -->
     <div class="film-grain"></div>
 
+    <!-- Lights Out Overlay -->
+    <div class="lights-out" id="lights-out">
+        <div class="lights-out__candle">
+            <div class="lights-out__glow"></div>
+            <div class="lights-out__flame"></div>
+        </div>
+        <div class="lights-out__text">LIGHTS OUT</div>
+    </div>
+
+    <!-- Note Modal -->
+    <div class="note-modal" id="note-modal">
+        <div class="note-modal__card">
+            <div class="note-modal__title">Send Anonymous Note</div>
+            <select id="note-recipient"><option value="">Choose recipient...</option></select>
+            <textarea id="note-text" placeholder="Write your message..." maxlength="200"></textarea>
+            <div class="note-modal__buttons">
+                <button class="btn btn-secondary" onclick="closeNoteModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="submitNote()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Note Toast -->
+    <div class="note-toast" id="note-toast" onclick="this.classList.remove('visible')">
+        <div class="note-toast__label">ANONYMOUS NOTE</div>
+        <div class="note-toast__text" id="note-toast-text"></div>
+    </div>
+
+    <!-- Achievement Toast -->
+    <div class="achievement" id="achievement">
+        <div class="achievement__icon" id="achievement-icon"><i class="fas fa-trophy"></i></div>
+        <div>
+            <div class="achievement__name" id="achievement-name">ACHIEVEMENT</div>
+            <div class="achievement__text" id="achievement-text">Description</div>
+        </div>
+    </div>
+
     <!-- Dead Overlay -->
     <div class="dead-overlay" id="dead-overlay"></div>
 
@@ -2435,6 +2680,16 @@
             <div class="death-progress">
                 <div class="death-progress-bar" id="death-progress-bar" style="width: 0%"></div>
             </div>
+
+            <!-- Action buttons -->
+            <div class="notes-section">
+                <button class="btn-send-note" onclick="openNoteModal()">
+                    <i class="fas fa-envelope"></i> Send Anonymous Note
+                </button>
+            </div>
+            <button class="btn-lights-out" id="btn-lights-out" onclick="toggleLightsOut()" style="display: none;">
+                <i class="fas fa-moon"></i> LIGHTS OUT
+            </button>
         </div>
 
         <!-- Death Toggle (fixed at bottom) -->
@@ -2931,8 +3186,13 @@
             updateTaskCountdown();
             showStatus('New task assigned!');
             playChime();
-            // Strong vibration pattern: two short buzzes
             haptic([100, 50, 150]);
+
+            // Achievement tracking
+            taskCount++;
+            if (taskCount === 1) checkAchievement('first_task');
+            if (taskCount === 5) checkAchievement('social');
+            if (taskCount === 10) checkAchievement('explorer');
         }
 
         // Peek at role (tap to show, auto-hide after 5 seconds)
@@ -2955,15 +3215,20 @@
 
         // Toggle death status
         async function toggleDeath() {
+            let lastWords = '';
             if (!gameState.isDead) {
                 if (!confirm('Are you sure you have been murdered?')) return;
+                lastWords = prompt('Any last words? (optional)') || '';
             }
 
             try {
-                const result = await callAPI('reportDeath', {
+                const params = {
                     gameCode: gameState.gameCode,
                     playerId: gameState.playerId
-                });
+                };
+                if (lastWords) params.lastWords = lastWords;
+
+                const result = await callAPI('reportDeath', params);
 
                 if (result.success) {
                     gameState.isDead = result.isDead;
@@ -2971,7 +3236,8 @@
                     updateDeathDisplay();
                     showStatus(gameState.isDead ? 'You have been murdered!' : 'Back from the dead!');
                     if (gameState.isDead) {
-                        haptic(300);
+                        haptic([200, 100, 200]);
+                        triggerDeathFlash();
                     }
                 }
             } catch (error) {
@@ -2988,6 +3254,12 @@
             const codeEl = document.getElementById('noir-gamecode');
             if (codeEl && gameState.gameCode) {
                 codeEl.textContent = 'CODE: ' + gameState.gameCode;
+            }
+
+            // Show lights-out button for host
+            const lightsBtn = document.getElementById('btn-lights-out');
+            if (lightsBtn) {
+                lightsBtn.style.display = gameState.isHost ? 'block' : 'none';
             }
 
             // Role icon
@@ -3140,12 +3412,28 @@
                     if (gameState.gameStatus === 'active') {
                         // Active game: poll getGameState for death count updates
                         const result = await callAPI('getGameState', {
-                            gameCode: gameState.gameCode
+                            gameCode: gameState.gameCode,
+                            playerId: gameState.playerId
                         });
 
                         if (result.success) {
                             // Check for new deaths before updating
                             checkForNewDeaths(result.deathCount);
+
+                            // Handle lights out
+                            handleLightsOut(result.lightsOut);
+
+                            // Handle messages (notes, last words)
+                            handleMessages(result.messages);
+
+                            // Survivor achievement
+                            if (result.deathCount >= 3 && !gameState.isDead) {
+                                checkAchievement('survivor');
+                            }
+                            // Witness achievement
+                            if (result.deathCount === 1 && previousDeathCount === 0) {
+                                checkAchievement('witness');
+                            }
 
                             gameState.deathCount = result.deathCount;
                             gameState.totalPlayers = result.totalPlayers;
@@ -3422,6 +3710,141 @@
                 triggerDeathFlash();
             }
             previousDeathCount = newCount;
+        }
+
+        // ==================== LIGHTS OUT ====================
+        let lightsOutActive = false;
+
+        async function toggleLightsOut() {
+            lightsOutActive = !lightsOutActive;
+            try {
+                await callAPI('lightsOut', {
+                    gameCode: gameState.gameCode,
+                    hostId: gameState.hostId,
+                    enabled: lightsOutActive ? 'true' : 'false'
+                });
+                const btn = document.getElementById('btn-lights-out');
+                if (lightsOutActive) {
+                    btn.classList.add('active-lights');
+                    btn.innerHTML = '<i class="fas fa-sun"></i> LIGHTS ON';
+                } else {
+                    btn.classList.remove('active-lights');
+                    btn.innerHTML = '<i class="fas fa-moon"></i> LIGHTS OUT';
+                }
+            } catch(e) {
+                lightsOutActive = !lightsOutActive;
+                showStatus('Failed to toggle lights', true);
+            }
+        }
+
+        function handleLightsOut(isLightsOut) {
+            const overlay = document.getElementById('lights-out');
+            if (isLightsOut && !gameState.isHost) {
+                overlay.classList.add('active');
+                haptic([300, 100, 300, 100, 500]);
+            } else if (!isLightsOut) {
+                overlay.classList.remove('active');
+            }
+        }
+
+        // ==================== SECRET NOTES ====================
+        function openNoteModal() {
+            const select = document.getElementById('note-recipient');
+            select.innerHTML = '<option value="">Choose recipient...</option>';
+            gameState.players.forEach(p => {
+                if (p.id !== gameState.playerId && !p.isDead) {
+                    const name = p.characterName || p.name;
+                    select.innerHTML += `<option value="${name}">${name}</option>`;
+                }
+            });
+            document.getElementById('note-text').value = '';
+            document.getElementById('note-modal').classList.add('visible');
+        }
+
+        function closeNoteModal() {
+            document.getElementById('note-modal').classList.remove('visible');
+        }
+
+        async function submitNote() {
+            const to = document.getElementById('note-recipient').value;
+            const msg = document.getElementById('note-text').value.trim();
+            if (!to) { showStatus('Pick a recipient', true); return; }
+            if (!msg) { showStatus('Write a message', true); return; }
+
+            try {
+                await callAPI('sendNote', {
+                    gameCode: gameState.gameCode,
+                    fromPlayerId: gameState.playerId,
+                    toCharacter: to,
+                    message: msg
+                });
+                closeNoteModal();
+                showStatus('Note sent to ' + to);
+                playClick();
+                checkAchievement('correspondent');
+            } catch(e) {
+                showStatus('Failed to send note', true);
+            }
+        }
+
+        let seenMessageIds = new Set();
+
+        function handleMessages(messages) {
+            if (!messages || !messages.length) return;
+            messages.forEach(msg => {
+                const msgId = msg.time + msg.message;
+                if (seenMessageIds.has(msgId)) return;
+                seenMessageIds.add(msgId);
+
+                if (msg.type === 'note') {
+                    showNoteToast(msg.message);
+                } else if (msg.type === 'lastwords') {
+                    showNoteToast(msg.message);
+                    triggerDeathFlash();
+                }
+            });
+        }
+
+        function showNoteToast(text) {
+            const toast = document.getElementById('note-toast');
+            document.getElementById('note-toast-text').textContent = text;
+            toast.classList.add('visible');
+            haptic([50, 30, 50]);
+            playClick();
+            setTimeout(() => toast.classList.remove('visible'), 8000);
+        }
+
+        // ==================== LAST WORDS ====================
+        // Modified toggleDeath is below — prompts for last words
+
+        // ==================== ACHIEVEMENTS ====================
+        let achievements = {};
+        let taskCount = 0;
+
+        const ACHIEVEMENT_LIST = {
+            first_task: { icon: 'fa-shoe-prints', name: 'First Steps', text: 'Completed your first task' },
+            social: { icon: 'fa-champagne-glasses', name: 'Social Butterfly', text: 'Completed 5 tasks' },
+            explorer: { icon: 'fa-compass', name: 'Explorer', text: 'Completed 10 tasks' },
+            survivor: { icon: 'fa-shield-halved', name: 'Survivor', text: 'Still alive after 3 deaths' },
+            witness: { icon: 'fa-eye', name: 'Witness', text: 'Witnessed the first murder' },
+            correspondent: { icon: 'fa-pen-fancy', name: 'Correspondent', text: 'Sent your first note' },
+        };
+
+        function checkAchievement(id) {
+            if (achievements[id]) return;
+            achievements[id] = true;
+            const ach = ACHIEVEMENT_LIST[id];
+            if (!ach) return;
+
+            const el = document.getElementById('achievement');
+            document.getElementById('achievement-icon').innerHTML = `<i class="fas ${ach.icon}"></i>`;
+            document.getElementById('achievement-name').textContent = ach.name;
+            document.getElementById('achievement-text').textContent = ach.text;
+            el.classList.add('visible');
+            haptic([50, 30, 100]);
+            playChime();
+
+            setTimeout(() => el.classList.remove('visible'), 5000);
         }
 
         // ==================== NEWSPAPER SYSTEM ====================
