@@ -43,16 +43,25 @@
 
         body {
             font-family: 'Cormorant Garamond', Georgia, serif;
-            --s: 60px;
-            --c1: rgba(201,162,39,0.25);
+            --s: 80px;
+            --c1: rgba(201,162,39,0.22);
             --c2: #2a2e28;
-            --_g: #0000 83%, var(--c1) 85% 99%, #0000 101%;
+            --t: calc(var(--s)/10);
+            --_c: #0000 calc(98% - var(--t)), var(--c1) calc(100% - var(--t)) 98%, #0000;
+            --_s: calc(2*var(--s)) calc(5*var(--s)/2);
+            --_r0: /var(--_s) radial-gradient(calc(var(--s)/2) at 0 20%, var(--_c));
+            --_r1: /var(--_s) radial-gradient(calc(var(--s)/2) at 100% 20%, var(--_c));
             background:
-                radial-gradient(27% 29% at right, var(--_g)) calc(var(--s) / 2) var(--s),
-                radial-gradient(27% 29% at left, var(--_g)) calc(var(--s) / -2) var(--s),
-                radial-gradient(29% 27% at top, var(--_g)) 0 calc(var(--s) / 2),
-                radial-gradient(29% 27% at bottom, var(--_g)) 0 calc(var(--s) / -2) var(--c2);
-            background-size: calc(2 * var(--s)) calc(2 * var(--s));
+                0 0 var(--_r0),
+                calc(-1*var(--s)) calc(5*var(--s)/4) var(--_r0),
+                var(--s) 0 var(--_r1),
+                0 calc(5*var(--s)/4) var(--_r1),
+                conic-gradient(at var(--t) calc(20% + 2*var(--t)), #0000 75%, var(--c1) 0)
+                    calc(var(--t)/-2) calc(var(--s) - var(--t))/var(--s) calc(5*var(--s)/4),
+                repeating-conic-gradient(rgba(201,162,39,0.08) 0 25%, #0000 0 50%)
+                    var(--s) calc(var(--s)/-8)/var(--_s),
+                conic-gradient(from 90deg at var(--t) var(--t), rgba(201,162,39,0.08) 25%, var(--c1) 0)
+                    calc((var(--s) - var(--t))/2) calc((var(--s) - var(--t))/2)/var(--s) calc(5*var(--s)/4);
             color: var(--cream);
             display: flex;
             flex-direction: column;
