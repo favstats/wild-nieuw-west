@@ -3629,9 +3629,11 @@
             }
         }
 
-        // Assign a random task entirely client-side
+        // Assign a random task — avoid current room and prefer rooms with capacity
         function assignRandomTask() {
-            const room = ROOMS[Math.floor(Math.random() * ROOMS.length)];
+            // Shuffle rooms and pick one that isn't the current room
+            const available = ROOMS.filter(r => r !== gameState.currentRoom);
+            const room = available[Math.floor(Math.random() * available.length)] || ROOMS[0];
             const tasks = ROOM_TASKS[room];
             const task = tasks[Math.floor(Math.random() * tasks.length)];
             gameState.currentRoom = room;
