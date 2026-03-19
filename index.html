@@ -1418,6 +1418,32 @@
             50% { border-color: transparent; }
         }
 
+        /* ====== VOTING ====== */
+        .vote-category {
+            margin-bottom: 16px;
+        }
+        .vote-category__label {
+            font-family: 'Playfair Display', serif;
+            font-size: 0.9rem;
+            color: var(--gold);
+            margin-bottom: 6px;
+        }
+        .vote-category__desc {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-bottom: 8px;
+        }
+        .vote-category select {
+            width: 100%;
+            padding: 10px;
+            background: var(--bg-darker);
+            border: 1px solid var(--gold-dark);
+            color: var(--cream);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1rem;
+        }
+
         /* ====== INSPECT CHARACTER CARDS ====== */
         .inspect-char {
             background: rgba(42,42,40,0.7);
@@ -2551,6 +2577,19 @@
         </div>
     </div>
 
+    <!-- Voting Modal -->
+    <div class="note-modal" id="voting-modal">
+        <div class="note-modal__card" style="max-height: 80vh; overflow-y: auto;">
+            <div class="note-modal__title"><i class="fas fa-trophy"></i> The Nieuw-West Awards</div>
+            <p style="font-size: 0.8rem; color: var(--text-muted); text-align: center; margin-bottom: 16px; font-style: italic;">Cast your vote in each category. Results revealed at the end.</p>
+            <div id="voting-categories"></div>
+            <div style="display: flex; gap: 8px; margin-top: 16px;">
+                <button class="btn btn-secondary" onclick="document.getElementById('voting-modal').classList.remove('visible')" style="flex:1;">Close</button>
+                <button class="btn btn-primary" onclick="submitVotes()" style="flex:1;">Submit Votes</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Dossier Modal -->
     <div class="note-modal" id="dossier-modal">
         <div class="note-modal__card" style="max-height: 80vh; overflow-y: auto;">
@@ -2913,6 +2952,9 @@
                     <i class="fas fa-users"></i> Guest List
                 </button>
             </div>
+            <button class="btn-send-note" onclick="openVoting()" style="margin-top: 8px;">
+                <i class="fas fa-trophy"></i> Awards Ballot
+            </button>
             <button class="btn-lights-out" id="btn-lights-out" onclick="toggleLightsOut()" style="display: none;">
                 <i class="fas fa-moon"></i> LIGHTS OUT
             </button>
@@ -4075,6 +4117,80 @@
             previousDeathCount = newCount;
         }
 
+        // ==================== VOTING SYSTEM ====================
+        const VOTE_CATEGORIES = [
+            { id: 'best_dressed', label: 'Best Dressed', desc: 'Finest attire of the evening' },
+            { id: 'most_charming', label: 'Most Charming', desc: 'Silver tongue, velvet voice' },
+            { id: 'most_suspicious', label: 'Most Suspicious', desc: 'Something about them just isn\'t right...' },
+            { id: 'best_actor', label: 'Best Performance', desc: 'Stayed in character all night' },
+            { id: 'most_dramatic', label: 'Most Dramatic Death', desc: 'Died with flair and panache' },
+            { id: 'best_detective', label: 'Sharpest Eye', desc: 'Noticed what others missed' },
+            { id: 'life_of_party', label: 'Life of the Party', desc: 'The one everyone wanted to talk to' },
+            { id: 'most_devious', label: 'Most Devious', desc: 'The puppeteer pulling strings from the shadows' },
+        ];
+
+        let hasVoted = false;
+
+        function openVoting() {
+            const el = document.getElementById('voting-categories');
+            const otherPlayers = gameState.players.filter(p => p.id !== gameState.playerId);
+
+            el.innerHTML = VOTE_CATEGORIES.map(cat => `
+                <div class="vote-category">
+                    <div class="vote-category__label">${cat.label}</div>
+                    <div class="vote-category__desc">${cat.desc}</div>
+                    <select id="vote-${cat.id}">
+                        <option value="">— choose —</option>
+                        ${otherPlayers.map(p => `<option value="${p.characterName || p.name}">${p.characterName || p.name}</option>`).join('')}
+                    </select>
+                </div>
+            `).join('');
+
+            document.getElementById('voting-modal').classList.add('visible');
+        }
+
+        async function submitVotes() {
+            if (hasVoted) {
+                showStatus('You have already voted!', true);
+                return;
+            }
+
+            const votes = {};
+            let anyVote = false;
+            VOTE_CATEGORIES.forEach(cat => {
+                const val = document.getElementById('vote-' + cat.id).value;
+                if (val) { votes[cat.id] = val; anyVote = true; }
+            });
+
+            if (!anyVote) {
+                showStatus('Cast at least one vote!', true);
+                return;
+            }
+
+            try {
+                // Store votes as a note to SYSTEM
+                const voteStr = VOTE_CATEGORIES
+                    .filter(cat => votes[cat.id])
+                    .map(cat => cat.label + ': ' + votes[cat.id])
+                    .join(' | ');
+
+                await callAPI('sendNote', {
+                    gameCode: gameState.gameCode,
+                    fromPlayerId: gameState.playerId,
+                    toCharacter: '__VOTES__',
+                    message: voteStr
+                });
+
+                hasVoted = true;
+                document.getElementById('voting-modal').classList.remove('visible');
+                showStatus('Your votes have been cast!');
+                playChime();
+                checkAchievement('voter');
+            } catch(e) {
+                showStatus('Failed to submit votes', true);
+            }
+        }
+
         // ==================== INSPECT CHARACTERS ====================
         function populateInspectScreen() {
             const list = document.getElementById('inspect-characters-list');
@@ -4331,6 +4447,7 @@
             survivor: { icon: 'fa-shield-halved', name: 'Survivor', text: 'Still alive after 3 deaths' },
             witness: { icon: 'fa-eye', name: 'Witness', text: 'Witnessed the first murder' },
             correspondent: { icon: 'fa-pen-fancy', name: 'Correspondent', text: 'Sent your first note' },
+            voter: { icon: 'fa-check-to-slot', name: 'Civic Duty', text: 'Cast your votes at the Awards' },
         };
 
         function checkAchievement(id) {
