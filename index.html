@@ -1418,6 +1418,74 @@
             50% { border-color: transparent; }
         }
 
+        /* ====== NEWSPAPER NOTIFICATION ====== */
+        .newspaper {
+            position: fixed;
+            top: -100%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 360px;
+            background: #e8dfd0;
+            color: #2a2a28;
+            padding: 16px 20px;
+            z-index: 300;
+            transition: top 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.6), inset 0 0 30px rgba(0,0,0,0.05);
+            border: 1px solid #c4b89a;
+        }
+        .newspaper.visible {
+            top: 60px;
+        }
+        .newspaper__header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 4px;
+        }
+        .newspaper__masthead {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: #2a2a28;
+        }
+        .newspaper__edition {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 0.6rem;
+            font-style: italic;
+            color: #6a6a5a;
+        }
+        .newspaper__rule {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #2a2a28, transparent);
+            margin: 6px 0;
+        }
+        .newspaper__category {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 0.6rem;
+            letter-spacing: 0.25em;
+            color: #722f37;
+            margin-bottom: 4px;
+        }
+        .newspaper__headline {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1rem;
+            font-weight: 700;
+            line-height: 1.35;
+            color: #1a1a18;
+        }
+        .newspaper__dismiss {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 0.7rem;
+            font-style: italic;
+            text-align: center;
+            color: #8a8a7a;
+            cursor: pointer;
+            margin-top: 4px;
+        }
+
         /* Flower shadows for directional lighting */
         .fl { filter: drop-shadow(3vmin 2vmin 4vmin rgba(0,0,0,0.5)); }
         .fl-float { filter: drop-shadow(2vmin 1vmin 3vmin rgba(0,0,0,0.4)); }
@@ -2423,6 +2491,19 @@
         </div>
     </div>
 
+    <!-- ==================== NEWSPAPER NOTIFICATION ==================== -->
+    <div class="newspaper" id="newspaper">
+        <div class="newspaper__header">
+            <div class="newspaper__masthead">THE NIEUW-WEST GAZETTE</div>
+            <div class="newspaper__edition" id="newspaper-edition">EVENING EDITION</div>
+        </div>
+        <div class="newspaper__rule"></div>
+        <div class="newspaper__category" id="newspaper-category">BREAKING</div>
+        <div class="newspaper__headline" id="newspaper-headline"></div>
+        <div class="newspaper__rule"></div>
+        <div class="newspaper__dismiss" onclick="dismissNewspaper()">tap to dismiss</div>
+    </div>
+
     <!-- ==================== STATUS MESSAGE ==================== -->
     <div class="status-message" id="status-message"></div>
 
@@ -2605,6 +2686,7 @@
             }
             if (screenId === 'game-screen') {
                 startTaskTimer();
+                startNewspaper();
             }
         }
 
@@ -3340,6 +3422,103 @@
                 triggerDeathFlash();
             }
             previousDeathCount = newCount;
+        }
+
+        // ==================== NEWSPAPER SYSTEM ====================
+        const NEWSPAPER_ITEMS = [
+            // BREAKING NEWS
+            { cat: 'BREAKING', headline: 'Suspicious figure spotted near the canals of Nieuw-West under cover of darkness' },
+            { cat: 'BREAKING', headline: 'Residents report hearing screams from a private gathering on the west side' },
+            { cat: 'BREAKING', headline: 'Police called to disturbance at exclusive soirée — no arrests made' },
+            { cat: 'BREAKING', headline: 'Unidentified person seen fleeing a mansion in the early hours' },
+            { cat: 'BREAKING', headline: 'Third unexplained disappearance this month shakes the western quarter' },
+            // SOCIETY PAGE
+            { cat: 'SOCIETY', headline: 'The Contessa\'s diamond necklace rumored to be a clever forgery' },
+            { cat: 'SOCIETY', headline: 'High society whispers: who is the mysterious newcomer at tonight\'s affair?' },
+            { cat: 'SOCIETY', headline: 'Exclusive: a bitter rivalry between two prominent guests threatens to boil over' },
+            { cat: 'SOCIETY', headline: 'Sources say the host\'s fortune is built on secrets best left buried' },
+            { cat: 'SOCIETY', headline: 'An uninvited guest has been spotted — but no one dares ask them to leave' },
+            { cat: 'SOCIETY', headline: 'The butler was overheard arguing in hushed tones with an unknown caller' },
+            // POLICE BLOTTER
+            { cat: 'POLICE BLOTTER', headline: 'Investigators find traces of poison in a wine glass at a recent gathering' },
+            { cat: 'POLICE BLOTTER', headline: 'A loaded revolver discovered hidden behind a painting in the west wing' },
+            { cat: 'POLICE BLOTTER', headline: 'Anonymous tip leads detectives to re-examine cold case from last autumn' },
+            { cat: 'POLICE BLOTTER', headline: 'Witness claims to have seen two figures struggling in the garden at midnight' },
+            { cat: 'POLICE BLOTTER', headline: 'Missing persons report filed — last seen entering a party on the west side' },
+            // EDITORIAL
+            { cat: 'EDITORIAL', headline: 'Can anyone truly be trusted? The art of deception at Nieuw-West\'s finest' },
+            { cat: 'EDITORIAL', headline: 'Opinion: the wealthy hide their sins behind champagne and pleasantries' },
+            { cat: 'EDITORIAL', headline: 'When the music stops, who will be left standing?' },
+            { cat: 'EDITORIAL', headline: 'The walls of Nieuw-West have eyes — and they never forget' },
+            // CLASSIFIED
+            { cat: 'CLASSIFIED', headline: 'WANTED: Information regarding events at the harbor. Reward offered. Discretion assured.' },
+            { cat: 'CLASSIFIED', headline: 'FOR SALE: One slightly bloodstained evening jacket. No questions asked.' },
+            { cat: 'CLASSIFIED', headline: 'SEEKING: Alibi for the evening of the 19th. Generous compensation.' },
+            { cat: 'CLASSIFIED', headline: 'LOST: One conscience. If found, do not return.' },
+            { cat: 'CLASSIFIED', headline: 'NOTICE: The person who took the letter from the study — we know who you are.' },
+            // WEATHER / ATMOSPHERE
+            { cat: 'WEATHER', headline: 'Dense fog expected to roll in from the west. Visibility near zero after midnight.' },
+            { cat: 'WEATHER', headline: 'An unseasonably cold night settles over Nieuw-West. Stay close to the fire.' },
+            { cat: 'WEATHER', headline: 'Storm warning: thunder and lightning expected. The perfect night for secrets.' },
+            // GOSSIP COLUMN
+            { cat: 'GOSSIP', headline: 'Who was seen whispering in the laundry room? Our sources refuse to say more.' },
+            { cat: 'GOSSIP', headline: 'A love letter found in the hallway — but addressed to whom?' },
+            { cat: 'GOSSIP', headline: 'Two guests arrived wearing the same brooch. Coincidence, or something darker?' },
+            { cat: 'GOSSIP', headline: 'The Professor was spotted carrying a vial of unknown liquid into the kitchen' },
+            { cat: 'GOSSIP', headline: 'A secret meeting on the balcony. What was discussed? Only the night sky knows.' },
+        ];
+
+        const EDITION_NAMES = [
+            'EVENING EDITION', 'LATE EDITION', 'SPECIAL EDITION',
+            'NIGHT EDITION', 'EXTRA! EXTRA!', 'MIDNIGHT EDITION',
+            'FINAL EDITION', 'URGENT BULLETIN'
+        ];
+
+        let newspaperTimer = null;
+        let shownHeadlines = new Set();
+
+        function startNewspaper() {
+            // First one after 2-4 minutes
+            const firstDelay = (120 + Math.random() * 120) * 1000;
+            newspaperTimer = setTimeout(function deliverNews() {
+                showNewspaper();
+                // Next one every 4-8 minutes
+                const nextDelay = (240 + Math.random() * 240) * 1000;
+                newspaperTimer = setTimeout(deliverNews, nextDelay);
+            }, firstDelay);
+        }
+
+        function showNewspaper() {
+            // Pick a random unused headline
+            const available = NEWSPAPER_ITEMS.filter((_, i) => !shownHeadlines.has(i));
+            if (available.length === 0) {
+                shownHeadlines.clear(); // Reset if we've shown them all
+                return;
+            }
+            const idx = Math.floor(Math.random() * available.length);
+            const originalIdx = NEWSPAPER_ITEMS.indexOf(available[idx]);
+            shownHeadlines.add(originalIdx);
+
+            const item = available[idx];
+            const edition = EDITION_NAMES[Math.floor(Math.random() * EDITION_NAMES.length)];
+
+            document.getElementById('newspaper-edition').textContent = edition;
+            document.getElementById('newspaper-category').textContent = item.cat;
+            document.getElementById('newspaper-headline').textContent = item.headline;
+
+            const el = document.getElementById('newspaper');
+            el.classList.add('visible');
+            haptic([50, 30, 50]);
+            playClick();
+
+            // Auto-dismiss after 12 seconds
+            setTimeout(() => {
+                dismissNewspaper();
+            }, 12000);
+        }
+
+        function dismissNewspaper() {
+            document.getElementById('newspaper').classList.remove('visible');
         }
 
         // ==================== OFFLINE DETECTION + RECONNECT ====================
