@@ -2537,7 +2537,7 @@
 
         // ==================== CONFIGURATION ====================
         const API_URL = 'https://script.google.com/macros/s/AKfycbwSGDiBg75MSpAffrrqu0LocClcWTWsQcbX_oBzBOmCBEYNgC-9lVdZOyPPMe0_5k1_Ww/exec'; // Replace with your deployed Apps Script URL
-        const POLL_INTERVAL = 3000;
+        const POLL_INTERVAL = 5000;
         const TASK_INTERVAL = 20 * 60 * 1000; // 20 minutes
 
         let pollTimer = null;
@@ -3316,7 +3316,7 @@
             previousDeathCount = newCount;
         }
 
-        // ==================== OFFLINE DETECTION ====================
+        // ==================== OFFLINE DETECTION + RECONNECT ====================
         function setupOfflineDetection() {
             window.addEventListener('offline', () => {
                 document.getElementById('offline-banner').classList.add('visible');
@@ -3324,6 +3324,18 @@
             window.addEventListener('online', () => {
                 document.getElementById('offline-banner').classList.remove('visible');
                 showStatus('Back online');
+                // Re-poll immediately on reconnect
+                if (gameState.gameCode && gameState.playerId) {
+                    startPolling();
+                }
+            });
+
+            // Resume polling when tab becomes visible (phone wake, tab switch)
+            document.addEventListener('visibilitychange', () => {
+                if (!document.hidden && gameState.gameCode && gameState.playerId) {
+                    showStatus('Reconnecting...');
+                    startPolling();
+                }
             });
         }
 
