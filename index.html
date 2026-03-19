@@ -1525,6 +1525,85 @@
         .fl__glow--9 { left: 42%; top: 40%; background: #c9a227; }
         .fl__glow--10 { right: 40%; top: 55%; width: 1vmin; height: 1vmin; background: #d4a898; box-shadow: 0 0 2vmin rgba(212,168,152,0.5); }
 
+        /* ====== DAISY FLOWERS (radial petals like the wallpaper) ====== */
+        .daisy {
+            position: absolute;
+            width: 10vmin;
+            height: 10vmin;
+        }
+        .daisy__petal {
+            position: absolute;
+            width: 3vmin;
+            height: 5vmin;
+            background: linear-gradient(to top, #e0d0c0, #f0e8e0);
+            border-radius: 50% 50% 40% 40%;
+            top: 50%;
+            left: 50%;
+            transform-origin: center bottom;
+            box-shadow: inset 0 0 1vmin rgba(0,0,0,0.1);
+        }
+        .daisy__petal:nth-child(1) { transform: translate(-50%, -100%) rotate(0deg); }
+        .daisy__petal:nth-child(2) { transform: translate(-50%, -100%) rotate(60deg); }
+        .daisy__petal:nth-child(3) { transform: translate(-50%, -100%) rotate(120deg); }
+        .daisy__petal:nth-child(4) { transform: translate(-50%, -100%) rotate(180deg); }
+        .daisy__petal:nth-child(5) { transform: translate(-50%, -100%) rotate(240deg); }
+        .daisy__petal:nth-child(6) { transform: translate(-50%, -100%) rotate(300deg); }
+        .daisy__center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 3vmin;
+            height: 3vmin;
+            border-radius: 50%;
+            background: radial-gradient(circle, #dbb84d 40%, #a08020 100%);
+            z-index: 1;
+        }
+        .daisy--1 { bottom: 35%; left: 5%; transform: scale(0.7); }
+        .daisy--2 { bottom: 40%; right: 6%; transform: scale(0.6) rotate(15deg); }
+        .daisy--3 { top: 10%; right: 20%; transform: scale(0.5) rotate(-10deg); opacity: 0.6; }
+        .daisy--4 { top: 22%; left: 15%; transform: scale(0.45) rotate(25deg); opacity: 0.5; }
+        .daisy--5 { bottom: 25%; left: 42%; transform: scale(0.55) rotate(-20deg); opacity: 0.7; }
+
+        /* Peach daisies */
+        .daisy--1 .daisy__petal { background: linear-gradient(to top, #c4967a, #e8cbb8); }
+        .daisy--3 .daisy__petal { background: linear-gradient(to top, #c0a880, #e0d8c0); }
+        .daisy--5 .daisy__petal { background: linear-gradient(to top, #d0a090, #f0d0c4); }
+
+        /* ====== ROSETTE BUDS (small circular flowers) ====== */
+        .rosette {
+            position: absolute;
+            width: 3vmin;
+            height: 3vmin;
+            border-radius: 50%;
+            background: radial-gradient(circle at 40% 40%, #dbb8a0, #c4967a);
+            box-shadow: 0 0 2vmin rgba(196,150,122,0.25),
+                         inset -0.5vmin -0.5vmin 1vmin rgba(0,0,0,0.15);
+        }
+        .rosette::after {
+            content: '';
+            position: absolute;
+            top: 25%;
+            left: 25%;
+            width: 40%;
+            height: 40%;
+            border-radius: 50%;
+            background: #dbb84d;
+        }
+        .rosette--1 { bottom: 30%; left: 25%; width: 2.5vmin; height: 2.5vmin; }
+        .rosette--2 { bottom: 45%; right: 22%; width: 2vmin; height: 2vmin; }
+        .rosette--3 { top: 18%; left: 8%; width: 2vmin; height: 2vmin; opacity: 0.6; }
+        .rosette--4 { top: 28%; right: 10%; width: 2.5vmin; height: 2.5vmin; opacity: 0.5; }
+        .rosette--5 { bottom: 20%; right: 35%; width: 1.8vmin; height: 1.8vmin; }
+        .rosette--6 { top: 42%; left: 22%; width: 2vmin; height: 2vmin; opacity: 0.5; }
+        .rosette--7 { bottom: 50%; left: 35%; width: 1.5vmin; height: 1.5vmin; opacity: 0.55; }
+        .rosette--8 { top: 5%; right: 35%; width: 2vmin; height: 2vmin; opacity: 0.45; }
+        /* Color variations */
+        .rosette--2 { background: radial-gradient(circle at 40% 40%, #e0d8c0, #c0b090); }
+        .rosette--4 { background: radial-gradient(circle at 40% 40%, #c8a0b0, #a07888); }
+        .rosette--6 { background: radial-gradient(circle at 40% 40%, #d0c0a0, #b0a070); }
+        .rosette--8 { background: radial-gradient(circle at 40% 40%, #c8a0b0, #a07888); }
+
         /* ====== VINES / WHIPLASH CURVES ====== */
         .vine {
             position: absolute;
@@ -1807,6 +1886,21 @@
       <div class="fl__glow fl__glow--8"></div>
       <div class="fl__glow fl__glow--9"></div>
       <div class="fl__glow fl__glow--10"></div>
+      <!-- Daisy flowers (radial petals) -->
+      <div class="daisy daisy--1"><div class="daisy__petal"></div><div class="daisy__petal"></div><div class="daisy__petal"></div><div class="daisy__petal"></div><div class="daisy__petal"></div><div class="daisy__petal"></div><div class="daisy__center"></div></div>
+      <div class="daisy daisy--2"><div class="daisy__petal"></div><div class="daisy__petal"></div><div class="daisy__petal"></div><div class="daisy__petal"></div><div class="daisy__petal"></div><div class="daisy__petal"></div><div class="daisy__center"></div></div>
+      <div class="daisy daisy--3"><div class="daisy__petal"></div><div class="daisy__petal"></div><div class="daisy__petal"></div><div class="daisy__petal"></div><div class="daisy__petal"></div><div class="daisy__petal"></div><div class="daisy__center"></div></div>
+      <div class="daisy daisy--4"><div class="daisy__petal"></div><div class="daisy__petal"></div><div class="daisy__petal"></div><div class="daisy__petal"></div><div class="daisy__petal"></div><div class="daisy__petal"></div><div class="daisy__center"></div></div>
+      <div class="daisy daisy--5"><div class="daisy__petal"></div><div class="daisy__petal"></div><div class="daisy__petal"></div><div class="daisy__petal"></div><div class="daisy__petal"></div><div class="daisy__petal"></div><div class="daisy__center"></div></div>
+      <!-- Rosette buds -->
+      <div class="rosette rosette--1"></div>
+      <div class="rosette rosette--2"></div>
+      <div class="rosette rosette--3"></div>
+      <div class="rosette rosette--4"></div>
+      <div class="rosette rosette--5"></div>
+      <div class="rosette rosette--6"></div>
+      <div class="rosette rosette--7"></div>
+      <div class="rosette rosette--8"></div>
       <!-- Vines -->
       <div class="vine vine--1"></div>
       <div class="vine vine--2"></div>
