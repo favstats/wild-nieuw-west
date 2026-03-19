@@ -44,13 +44,21 @@
 
         body {
             font-family: 'Cormorant Garamond', Georgia, serif;
-            background-color: #2a2a28;
-            background-image:
-                radial-gradient(rgba(201,162,39,0.35) 9px, transparent 10px),
-                repeating-radial-gradient(rgba(138,154,91,0.25) 0, rgba(138,154,91,0.25) 4px, transparent 5px, transparent 20px, rgba(212,168,152,0.22) 21px, rgba(212,168,152,0.22) 25px, transparent 26px, transparent 50px),
-                radial-gradient(rgba(148,100,130,0.20) 9px, transparent 10px) 45px 45px,
-                repeating-radial-gradient(rgba(201,162,39,0.18) 0, rgba(201,162,39,0.18) 4px, transparent 5px, transparent 20px, rgba(107,122,69,0.20) 21px, rgba(107,122,69,0.20) 25px, transparent 26px, transparent 50px) 45px 45px;
-            background-size: 90px 90px;
+            --s: 80px;
+            --c1: #c9a227;
+            --c2: #4a5240;
+            --c3: #3a3832;
+            --c4: #2a2a28;
+            --c5: #6b7a45;
+            background:
+                conic-gradient(from 30deg at 50% 25%, #0000 300deg, var(--c1) 0)
+                    calc(0.2885 * var(--s)) calc(7 * var(--s) / 12),
+                conic-gradient(from 30deg at 50% 25%, #0000 300deg, var(--c1) 0)
+                    0 calc(var(--s) / 12),
+                conic-gradient(from 120deg at 50% calc(250% / 3), var(--c2) 120deg, #0000 0),
+                repeating-conic-gradient(from 30deg, #0000 0 60deg, var(--c3) 0 120deg),
+                repeating-conic-gradient(var(--c4) 0 60deg, var(--c2) 0 120deg, var(--c5) 0 180deg);
+            background-size: calc(0.577 * var(--s)) var(--s);
             color: var(--cream);
             display: flex;
             flex-direction: column;
