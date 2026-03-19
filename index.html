@@ -1291,6 +1291,171 @@
                 font-size: 1rem;
             }
         }
+
+        /* ============================================
+           STATIC FLORAL BACKGROUND (Art Nouveau)
+           ============================================ */
+        .floral-bg {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 55vh;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+            mask-image: linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.3) 40%, transparent 80%);
+            -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.3) 40%, transparent 80%);
+        }
+
+        .screen { position: relative; z-index: 1; }
+
+        /* Flower positioning */
+        .fl {
+            position: absolute;
+            bottom: 0;
+            transform-origin: bottom center;
+        }
+        .fl--1 { left: 50%; transform: translateX(-50%); }
+        .fl--2 { left: 15%; transform: rotate(-12deg); }
+        .fl--3 { right: 10%; transform: rotate(8deg); }
+
+        /* Petals container */
+        .fl__petals {
+            position: relative;
+            width: 14vmin;
+            height: 14vmin;
+            margin: 0 auto;
+        }
+
+        /* Individual petals */
+        .fl__petal {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 6vmin;
+            height: 9vmin;
+            border-radius: 50% 50% 45% 55% / 60% 60% 40% 40%;
+            transform-origin: bottom center;
+            opacity: 0.85;
+            box-shadow: inset 0 0 2vmin rgba(255,255,255,0.15);
+        }
+        .fl__petal--1 {
+            background: linear-gradient(to top, #b07878, #d4a898);
+            transform: translate(-50%, 0) rotate(-30deg) rotateY(20deg);
+        }
+        .fl__petal--2 {
+            background: linear-gradient(to top, #b07878, #e8c4c4);
+            transform: translate(-50%, -5%) rotate(5deg);
+        }
+        .fl__petal--3 {
+            background: linear-gradient(to top, #b07878, #d4a898);
+            transform: translate(-50%, 0) rotate(35deg) rotateY(-20deg);
+        }
+        .fl__petal--4 {
+            width: 5vmin;
+            height: 7vmin;
+            background: linear-gradient(to top, #946478, #d4a898);
+            transform-origin: bottom left;
+            border-radius: 3vmin 8vmin 3vmin 3vmin;
+            transform: translate(-20%, 10%) rotate(-50deg);
+            opacity: 0.7;
+        }
+
+        /* Flower 2 petals — slightly different hue */
+        .fl--2 .fl__petal--1 { background: linear-gradient(to top, #a08060, #d4c0a0); }
+        .fl--2 .fl__petal--2 { background: linear-gradient(to top, #a08060, #e8dfd0); }
+        .fl--2 .fl__petal--3 { background: linear-gradient(to top, #a08060, #d4c0a0); }
+        .fl--2 .fl__petal--4 { background: linear-gradient(to top, #806040, #c4a880); }
+
+        /* Flower 3 petals — more pink */
+        .fl--3 .fl__petal--1 { background: linear-gradient(to top, #c08888, #e8b8b8); }
+        .fl--3 .fl__petal--2 { background: linear-gradient(to top, #c08888, #f0d0d0); }
+        .fl--3 .fl__petal--3 { background: linear-gradient(to top, #c08888, #e8b8b8); }
+
+        /* Flower center */
+        .fl__center {
+            position: absolute;
+            left: 50%;
+            bottom: 20%;
+            transform: translate(-50%, 0);
+            width: 5vmin;
+            height: 3vmin;
+            border-radius: 50%;
+            background: radial-gradient(circle, #dbb84d 30%, #c9a227 70%);
+            box-shadow: 0 0 3vmin rgba(201,162,39,0.3);
+        }
+
+        /* Stem */
+        .fl__stem {
+            width: 1.2vmin;
+            height: 45vmin;
+            margin: 0 auto;
+            background: linear-gradient(to top, transparent 5%, #6b7a45 30%, #8a9a5b);
+            box-shadow: inset 0.3vmin 0 0.5vmin rgba(0,0,0,0.2);
+        }
+        .fl--2 .fl__stem { height: 35vmin; }
+        .fl--3 .fl__stem { height: 40vmin; }
+
+        /* Leaves on stems */
+        .fl__leaf {
+            position: absolute;
+            width: 6vmin;
+            height: 8vmin;
+            border-radius: 0 100% 0 100%;
+            background: linear-gradient(135deg, #6b7a45 30%, #8a9a5b);
+        }
+        .fl__leaf--r {
+            right: -4vmin;
+            bottom: 35%;
+            transform: rotate(-20deg);
+        }
+        .fl__leaf--l {
+            left: -4vmin;
+            bottom: 50%;
+            border-radius: 100% 0 100% 0;
+            transform: rotate(20deg);
+            background: linear-gradient(225deg, #6b7a45 30%, #8a9a5b);
+        }
+        .fl__leaf--l2 {
+            left: -3.5vmin;
+            bottom: 22%;
+            border-radius: 100% 0 100% 0;
+            transform: rotate(30deg) scale(0.7);
+            background: linear-gradient(225deg, #5a6838 30%, #7a8a4b);
+        }
+
+        /* Grass/fern shapes at base */
+        .fl__grass {
+            position: absolute;
+            bottom: 0;
+            width: 20vmin;
+            height: 50vmin;
+            border-top-left-radius: 100%;
+            border-left: 1.5vmin solid #6b7a45;
+            mask-image: linear-gradient(to top, transparent 20%, #000 60%);
+            -webkit-mask-image: linear-gradient(to top, transparent 20%, #000 60%);
+        }
+        .fl__grass--1 { left: 5%; transform: rotate(15deg); height: 40vmin; border-color: #5a6838; }
+        .fl__grass--2 { left: 25%; transform: rotateY(180deg) rotate(10deg); height: 55vmin; border-color: #8a9a5b; }
+        .fl__grass--3 { right: 5%; transform: rotateY(180deg) rotate(15deg); height: 45vmin; border-color: #6b7a45; }
+        .fl__grass--4 { right: 20%; transform: rotate(5deg); height: 50vmin; border-color: #5a6838; }
+        .fl__grass--5 { left: 45%; transform: rotateY(180deg) rotate(20deg); height: 35vmin; border-color: #7a8a4b; }
+
+        /* Glow particles */
+        .fl__glow {
+            position: absolute;
+            width: 1.2vmin;
+            height: 1.2vmin;
+            border-radius: 50%;
+            background: #dbb84d;
+            box-shadow: 0 0 2vmin rgba(219,184,77,0.6);
+        }
+        .fl__glow--1 { left: 48%; bottom: 55%; }
+        .fl__glow--2 { left: 20%; bottom: 45%; background: #d4a898; box-shadow: 0 0 2vmin rgba(212,168,152,0.5); }
+        .fl__glow--3 { right: 18%; bottom: 50%; }
+        .fl__glow--4 { left: 35%; bottom: 35%; width: 0.8vmin; height: 0.8vmin; background: #e8dfd0; }
+        .fl__glow--5 { right: 30%; bottom: 40%; width: 0.8vmin; height: 0.8vmin; background: #d4a898; box-shadow: 0 0 1.5vmin rgba(212,168,152,0.4); }
     </style>
 </head>
 <body>
@@ -1307,6 +1472,62 @@
 
     <!-- Dead Overlay -->
     <div class="dead-overlay" id="dead-overlay"></div>
+
+    <!-- Static Floral Background -->
+    <div class="floral-bg">
+      <!-- Flower 1: center -->
+      <div class="fl fl--1">
+        <div class="fl__petals">
+          <div class="fl__petal fl__petal--1"></div>
+          <div class="fl__petal fl__petal--2"></div>
+          <div class="fl__petal fl__petal--3"></div>
+          <div class="fl__petal fl__petal--4"></div>
+          <div class="fl__center"></div>
+        </div>
+        <div class="fl__stem"></div>
+        <div class="fl__leaf fl__leaf--l"></div>
+        <div class="fl__leaf fl__leaf--r"></div>
+        <div class="fl__leaf fl__leaf--l2"></div>
+      </div>
+      <!-- Flower 2: left -->
+      <div class="fl fl--2">
+        <div class="fl__petals">
+          <div class="fl__petal fl__petal--1"></div>
+          <div class="fl__petal fl__petal--2"></div>
+          <div class="fl__petal fl__petal--3"></div>
+          <div class="fl__petal fl__petal--4"></div>
+          <div class="fl__center"></div>
+        </div>
+        <div class="fl__stem"></div>
+        <div class="fl__leaf fl__leaf--r"></div>
+        <div class="fl__leaf fl__leaf--l"></div>
+      </div>
+      <!-- Flower 3: right -->
+      <div class="fl fl--3">
+        <div class="fl__petals">
+          <div class="fl__petal fl__petal--1"></div>
+          <div class="fl__petal fl__petal--2"></div>
+          <div class="fl__petal fl__petal--3"></div>
+          <div class="fl__petal fl__petal--4"></div>
+          <div class="fl__center"></div>
+        </div>
+        <div class="fl__stem"></div>
+        <div class="fl__leaf fl__leaf--l"></div>
+        <div class="fl__leaf fl__leaf--r"></div>
+      </div>
+      <!-- Grass/fern shapes -->
+      <div class="fl__grass fl__grass--1"></div>
+      <div class="fl__grass fl__grass--2"></div>
+      <div class="fl__grass fl__grass--3"></div>
+      <div class="fl__grass fl__grass--4"></div>
+      <div class="fl__grass fl__grass--5"></div>
+      <!-- Light particles -->
+      <div class="fl__glow fl__glow--1"></div>
+      <div class="fl__glow fl__glow--2"></div>
+      <div class="fl__glow fl__glow--3"></div>
+      <div class="fl__glow fl__glow--4"></div>
+      <div class="fl__glow fl__glow--5"></div>
+    </div>
 
     <!-- Leave Button -->
     <button class="leave-btn" id="leave-btn" style="display: none;" onclick="leaveGame()">
