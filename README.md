@@ -16,6 +16,12 @@ A noir-themed murder mystery companion app for real-life parties. Players select
   <img src="screenshots/19-awards-results.png" width="200" alt="Awards">
 </p>
 
+<p align="center">
+  <img src="screenshots/25-lights-out.png" width="200" alt="Lights Out">
+  <img src="screenshots/23-note-received.png" width="200" alt="Anonymous Note">
+  <img src="screenshots/26-inbox.png" width="200" alt="Inbox">
+</p>
+
 ## Features
 
 ### Core Gameplay
