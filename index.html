@@ -45,13 +45,8 @@
         body {
             font-family: 'Cormorant Garamond', Georgia, serif;
             background-color: #2a2a28;
-            background-image:
-                radial-gradient(circle at 100% 150%, #2a2a28 24%, rgba(138,154,91,0.18) 24%, rgba(138,154,91,0.18) 28%, #2a2a28 28%, #2a2a28 36%, rgba(212,168,152,0.15) 36%, rgba(212,168,152,0.15) 40%, transparent 40%, transparent),
-                radial-gradient(circle at 0 150%, #2a2a28 24%, rgba(138,154,91,0.18) 24%, rgba(138,154,91,0.18) 28%, #2a2a28 28%, #2a2a28 36%, rgba(212,168,152,0.15) 36%, rgba(212,168,152,0.15) 40%, transparent 40%, transparent),
-                radial-gradient(circle at 50% 100%, rgba(201,162,39,0.14) 10%, #2a2a28 10%, #2a2a28 23%, rgba(201,162,39,0.14) 23%, rgba(201,162,39,0.14) 30%, #2a2a28 30%, #2a2a28 43%, rgba(114,47,55,0.12) 43%, rgba(114,47,55,0.12) 50%, #2a2a28 50%, #2a2a28 63%, rgba(138,154,91,0.10) 63%, rgba(138,154,91,0.10) 71%, transparent 71%, transparent),
-                radial-gradient(circle at 100% 50%, rgba(201,162,39,0.12) 5%, #2a2a28 5%, #2a2a28 15%, rgba(201,162,39,0.12) 15%, rgba(201,162,39,0.12) 20%, #2a2a28 20%, #2a2a28 29%, rgba(212,168,152,0.10) 29%, rgba(212,168,152,0.10) 34%, #2a2a28 34%, #2a2a28 44%, rgba(107,122,69,0.10) 44%, rgba(107,122,69,0.10) 49%, transparent 49%, transparent),
-                radial-gradient(circle at 0 50%, rgba(201,162,39,0.12) 5%, #2a2a28 5%, #2a2a28 15%, rgba(201,162,39,0.12) 15%, rgba(201,162,39,0.12) 20%, #2a2a28 20%, #2a2a28 29%, rgba(212,168,152,0.10) 29%, rgba(212,168,152,0.10) 34%, #2a2a28 34%, #2a2a28 44%, rgba(107,122,69,0.10) 44%, rgba(107,122,69,0.10) 49%, transparent 49%, transparent);
-            background-size: 100px 50px;
+            background-image: url('bg-pattern.svg');
+            background-size: 400px 400px;
             color: var(--cream);
             display: flex;
             flex-direction: column;
@@ -147,7 +142,7 @@
 
         .logo-title {
             font-family: 'Poiret One', 'Playfair Display', Georgia, serif;
-            font-size: 3rem;
+            font-size: 2.4rem;
             font-weight: 400;
             color: #fff;
             text-shadow: 3px 3px 0 rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.6), 0 0 40px rgba(201,162,39,0.2);
@@ -300,8 +295,9 @@
         }
 
         .btn-join {
-            padding: 14px 20px;
-            font-size: 1.1rem;
+            padding: 14px 16px;
+            font-size: 1rem;
+            flex-shrink: 0;
         }
 
         /* ============================================
